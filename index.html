@@ -5,80 +5,122 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DNR — پادکست دونفره</title>
 <style>
-  /* ... همان استایل‌های قبلی ... */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #f5f3f0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  }
+  h1 { text-align: center; color: #1a1a1a; margin-bottom: 8px; }
+  p { text-align: center; color: #666; margin-bottom: 25px; }
+  textarea, select, button {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    margin-bottom: 12px;
+  }
+  textarea { height: 120px; resize: vertical; }
+  button {
+    background: #2d6a4f;
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  button:hover { background: #1e4d3a; }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  #result { margin-top: 20px; display: none; }
+  audio { width: 100%; margin-top: 10px; }
+  .download-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #e8f0fe;
+    color: #1a1a1a;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    border: 1px solid #ccc;
+  }
+  .download-btn:hover { background: #d2e3fc; }
+  .spinner { display: none; text-align: center; margin: 10px 0; }
+  .error { color: #b91c1c; background: #fee2e2; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
 </style>
 </head>
 <body>
 <div class="container">
-  <header>
-    <div class="logo">DNR</div>
-    <h1>پادکست دونفره با <span>Gemini TTS</span></h1>
-  </header>
+  <h1>🎙️ DNR پادکست دونفره</h1>
+  <p>موضوع را وارد کنید، پادکست را بشنوید</p>
 
-  <div class="card">
-    <label class="field-label" for="topicInput">موضوع پادکست</label>
-    <textarea id="topicInput" placeholder="موضوع مورد نظر خود را وارد کنید..."></textarea>
-    <div class="controls">
-      <div class="select-wrap">
-        <label class="field-label" for="durationSelect">مدت زمان (دقیقه)</label>
-        <select id="durationSelect">
-          <option value="1">۱ دقیقه</option>
-          <option value="2" selected>۲ دقیقه</option>
-          <option value="3">۳ دقیقه</option>
-        </select>
-      </div>
-      <button class="btn-generate" id="generateBtn" onclick="generate()">
-        <div class="spinner" id="spinner"></div>
-        <span id="btnText">ساخت پادکست</span>
-      </button>
-    </div>
-  </div>
+  <textarea id="topicInput" placeholder="مثلاً: آینده هوش مصنوعی"></textarea>
+  <select id="durationSelect">
+    <option value="1">۱ دقیقه</option>
+    <option value="2" selected>۲ دقیقه</option>
+    <option value="3">۳ دقیقه</option>
+  </select>
 
-  <div class="result-card" id="resultCard">
-    <div class="result-label">پادکست ساخته شد</div>
+  <button id="generateBtn">✨ ساخت پادکست</button>
+
+  <div class="spinner" id="spinner">⏳ در حال ساخت...</div>
+  <div class="error" id="errorMsg"></div>
+
+  <div id="result">
     <audio id="audioPlayer" controls></audio>
-    <a class="btn-download" id="downloadBtn" download="podcast.wav">
-      ⬇ دانلود پادکست
-    </a>
+    <a class="download-btn" id="downloadBtn" download="podcast.wav">⬇️ دانلود پادکست</a>
   </div>
-
-  <footer>ساخته شده با Groq + Gemini TTS</footer>
 </div>
 
 <script>
 const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
 
-async function generate() {
-  const topic = document.getElementById("topicInput").value.trim();
-  if (!topic) return;
+document.getElementById('generateBtn').addEventListener('click', async () => {
+  const topic = document.getElementById('topicInput').value.trim();
+  if (!topic) return alert('لطفاً موضوع را وارد کنید');
 
-  const duration = parseInt(document.getElementById("durationSelect").value);
-
-  const btn = document.getElementById("generateBtn");
-  const spinner = document.getElementById("spinner");
-  const btnText = document.getElementById("btnText");
-  const resultCard = document.getElementById("resultCard");
+  const duration = parseInt(document.getElementById('durationSelect').value);
+  const btn = document.getElementById('generateBtn');
+  const spinner = document.getElementById('spinner');
+  const errorMsg = document.getElementById('errorMsg');
+  const resultDiv = document.getElementById('result');
+  const audioPlayer = document.getElementById('audioPlayer');
+  const downloadBtn = document.getElementById('downloadBtn');
 
   btn.disabled = true;
-  spinner.style.display = "block";
-  btnText.textContent = "در حال ساخت...";
-  resultCard.classList.remove("visible");
+  spinner.style.display = 'block';
+  errorMsg.style.display = 'none';
+  resultDiv.style.display = 'none';
 
   try {
     const res = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic, duration }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, duration })
     });
 
     const data = await res.json();
     if (data.error) throw new Error(data.error);
 
     if (!data.audioFiles || data.audioFiles.length === 0) {
-      throw new Error("هیچ فایل صوتی تولید نشد");
+      throw new Error('هیچ فایل صوتی تولید نشد');
     }
 
-    // چسباندن تمام فایل‌های صوتی (Base64)
+    // ترکیب تمام فایل‌های صوتی (Base64)
     const audioBlobs = data.audioFiles.map(base64 => {
       const byteChars = atob(base64);
       const byteArray = new Uint8Array(byteChars.length);
@@ -88,7 +130,6 @@ async function generate() {
       return byteArray;
     });
 
-    // محاسبه طول کل
     const totalLength = audioBlobs.reduce((sum, arr) => sum + arr.length, 0);
     const combined = new Uint8Array(totalLength);
     let offset = 0;
@@ -97,25 +138,48 @@ async function generate() {
       offset += arr.length;
     }
 
-    // تبدیل به WAV (با همان تابع pcmToWav)
+    // تبدیل به WAV (با فرض PCM 16-bit 24kHz mono)
     const blob = pcmToWav(combined, 24000, 1, 16);
     const url = URL.createObjectURL(blob);
 
-    document.getElementById("audioPlayer").src = url;
-    document.getElementById("downloadBtn").href = url;
-    resultCard.classList.add("visible");
+    audioPlayer.src = url;
+    downloadBtn.href = url;
+    resultDiv.style.display = 'block';
 
   } catch (err) {
-    alert("خطا: " + err.message);
+    errorMsg.textContent = '❌ ' + err.message;
+    errorMsg.style.display = 'block';
   } finally {
     btn.disabled = false;
-    spinner.style.display = "none";
-    btnText.textContent = "ساخت پادکست";
+    spinner.style.display = 'none';
   }
-}
+});
 
+// ===== تابع تبدیل PCM به WAV =====
 function pcmToWav(pcmData, sampleRate, numChannels, bitDepth) {
-  // ... (همان تابع قبلی)
+  const dataLength = pcmData.length;
+  const buffer = new ArrayBuffer(44 + dataLength);
+  const view = new DataView(buffer);
+  const writeStr = (offset, str) => {
+    for (let i = 0; i < str.length; i++) {
+      view.setUint8(offset + i, str.charCodeAt(i));
+    }
+  };
+  writeStr(0, 'RIFF');
+  view.setUint32(4, 36 + dataLength, true);
+  writeStr(8, 'WAVE');
+  writeStr(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * numChannels * bitDepth / 8, true);
+  view.setUint16(32, numChannels * bitDepth / 8, true);
+  view.setUint16(34, bitDepth, true);
+  writeStr(36, 'data');
+  view.setUint32(40, dataLength, true);
+  new Uint8Array(buffer, 44).set(pcmData);
+  return new Blob([buffer], { type: 'audio/wav' });
 }
 </script>
 </body>
