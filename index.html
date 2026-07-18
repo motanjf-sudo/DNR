@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DNR Podcast Studio</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎙️ DNR Podcast Studio</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
         }
         body {
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             padding: 20px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
         }
         .container {
             background: rgba(255, 255, 255, 0.05);
@@ -27,7 +27,7 @@
             max-width: 500px;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
         }
         .logo {
             text-align: center;
@@ -153,29 +153,29 @@
 
         <form id="form">
             <div class="input-group">
-                <label>📝 موضوع پادکست</label>
+                <label>📝 موضوع</label>
                 <textarea id="topic" placeholder="مثلاً: آینده هوش مصنوعی"></textarea>
             </div>
             <div class="input-group">
-                <label>⏱️ مدت زمان (دقیقه)</label>
-                <input type="number" id="duration" value="2" min="1" max="10">
+                <label>⏱️ مدت (دقیقه)</label>
+                <input type="number" id="duration" value="2" min="1" max="5" />
             </div>
             <button type="submit" class="btn" id="generateBtn">✨ ساخت پادکست</button>
         </form>
 
         <div id="loading">
             <div class="spinner"></div>
-            <p>در حال تولید پادکست...</p>
+            <p>در حال ساخت...</p>
         </div>
 
         <div id="result">
             <div class="audio-player">
                 <audio id="player" controls></audio>
-                <button class="download-btn" id="downloadBtn">📥 دانلود پادکست</button>
+                <button class="download-btn" id="downloadBtn">📥 دانلود MP3</button>
             </div>
         </div>
 
-        <div class="footer">ساخته شده با ❤️ و Groq (Qwen3.6-27b)</div>
+        <div class="footer">با ❤️ و Groq + Gemini</div>
     </div>
 
     <script>
@@ -190,14 +190,11 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const generateBtn = document.getElementById('generateBtn');
 
-        let combinedAudioBlob = null;
+        let combinedBlob = null;
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!topic.value.trim()) {
-                alert('لطفاً موضوع رو وارد کن');
-                return;
-            }
+            if (!topic.value.trim()) return alert('لطفاً موضوع رو وارد کن');
 
             loading.style.display = 'block';
             result.style.display = 'none';
@@ -217,11 +214,11 @@
                 if (!res.ok || data.error) throw new Error(data.error || 'خطا');
 
                 if (!data.audioFiles || data.audioFiles.length === 0) {
-                    throw new Error('هیچ فایل صوتی تولید نشد');
+                    throw new Error('صدایی ساخته نشد');
                 }
 
                 // تبدیل Base64 به Blob
-                const audioBlobs = data.audioFiles.map(base64 => {
+                const blobs = data.audioFiles.map(base64 => {
                     const byteChars = atob(base64);
                     const byteArray = new Uint8Array(byteChars.length);
                     for (let i = 0; i < byteChars.length; i++) {
@@ -231,99 +228,77 @@
                 });
 
                 // چسباندن با Web Audio API
-                const audioContext = new(window.AudioContext || window.webkitAudioContext)();
-                const audioBuffers = [];
+                const ctx = new(window.AudioContext || window.webkitAudioContext)();
+                const buffers = await Promise.all(blobs.map(async b => {
+                    const buf = await b.arrayBuffer();
+                    return ctx.decodeAudioData(buf);
+                }));
 
-                for (const blob of audioBlobs) {
-                    const arrayBuffer = await blob.arrayBuffer();
-                    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-                    audioBuffers.push(audioBuffer);
-                }
+                const total = buffers.reduce((s, b) => s + b.length, 0);
+                const sr = buffers[0].sampleRate;
+                const ch = buffers[0].numberOfChannels;
+                const combined = ctx.createBuffer(ch, total, sr);
 
-                const totalLength = audioBuffers.reduce((sum, buf) => sum + buf.length, 0);
-                const sampleRate = audioBuffers[0].sampleRate;
-                const numberOfChannels = audioBuffers[0].numberOfChannels;
-
-                const combinedBuffer = audioContext.createBuffer(numberOfChannels, totalLength, sampleRate);
                 let offset = 0;
-                for (const buf of audioBuffers) {
-                    for (let channel = 0; channel < numberOfChannels; channel++) {
-                        const channelData = combinedBuffer.getChannelData(channel);
-                        channelData.set(buf.getChannelData(channel), offset);
+                for (const buf of buffers) {
+                    for (let c = 0; c < ch; c++) {
+                        combined.getChannelData(c).set(buf.getChannelData(c), offset);
                     }
                     offset += buf.length;
                 }
 
-                const wavBlob = await audioBufferToWav(combinedBuffer);
-                combinedAudioBlob = wavBlob;
-
-                const url = URL.createObjectURL(wavBlob);
+                // تبدیل به WAV
+                combinedBlob = await bufferToWav(combined);
+                const url = URL.createObjectURL(combinedBlob);
                 player.src = url;
                 result.style.display = 'block';
 
             } catch (err) {
-                alert('❌ خطا: ' + err.message);
+                alert('❌ ' + err.message);
             } finally {
                 loading.style.display = 'none';
                 generateBtn.disabled = false;
             }
         });
 
-        function audioBufferToWav(buffer) {
+        function bufferToWav(buffer) {
             return new Promise((resolve) => {
-                const numChannels = buffer.numberOfChannels;
-                const sampleRate = buffer.sampleRate;
-                const format = 1;
-                const bitDepth = 16;
-                const bytesPerSample = bitDepth / 8;
-                const blockAlign = numChannels * bytesPerSample;
-
+                const ch = buffer.numberOfChannels;
+                const sr = buffer.sampleRate;
                 const samples = buffer.getChannelData(0);
-                const dataLength = samples.length * blockAlign;
-                const bufferLength = 44 + dataLength;
-
-                const arrayBuffer = new ArrayBuffer(bufferLength);
-                const view = new DataView(arrayBuffer);
-
-                const writeString = (offset, string) => {
-                    for (let i = 0; i < string.length; i++) {
-                        view.setUint8(offset + i, string.charCodeAt(i));
-                    }
-                };
-
-                writeString(0, 'RIFF');
-                view.setUint32(4, 36 + dataLength, true);
-                writeString(8, 'WAVE');
-                writeString(12, 'fmt ');
+                const dataLen = samples.length * 2;
+                const buf = new ArrayBuffer(44 + dataLen);
+                const view = new DataView(buf);
+                const write = (o, s) => { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)); };
+                write(0, 'RIFF');
+                view.setUint32(4, 36 + dataLen, true);
+                write(8, 'WAVE');
+                write(12, 'fmt ');
                 view.setUint32(16, 16, true);
-                view.setUint16(20, format, true);
-                view.setUint16(22, numChannels, true);
-                view.setUint32(24, sampleRate, true);
-                view.setUint32(28, sampleRate * blockAlign, true);
-                view.setUint16(32, blockAlign, true);
-                view.setUint16(34, bitDepth, true);
-                writeString(36, 'data');
-                view.setUint32(40, dataLength, true);
-
-                const offset = 44;
+                view.setUint16(20, 1, true);
+                view.setUint16(22, ch, true);
+                view.setUint32(24, sr, true);
+                view.setUint32(28, sr * ch * 2, true);
+                view.setUint16(32, ch * 2, true);
+                view.setUint16(34, 16, true);
+                write(36, 'data');
+                view.setUint32(40, dataLen, true);
+                const off = 44;
                 for (let i = 0; i < samples.length; i++) {
-                    const sample = Math.max(-1, Math.min(1, samples[i]));
-                    view.setInt16(offset + i * bytesPerSample, sample * 0x7FFF, true);
+                    const s = Math.max(-1, Math.min(1, samples[i]));
+                    view.setInt16(off + i * 2, s * 0x7FFF, true);
                 }
-
-                resolve(new Blob([arrayBuffer], { type: 'audio/wav' }));
+                resolve(new Blob([buf], { type: 'audio/wav' }));
             });
         }
 
         downloadBtn.addEventListener('click', () => {
-            if (!combinedAudioBlob) return;
-            const url = URL.createObjectURL(combinedAudioBlob);
+            if (!combinedBlob) return;
+            const url = URL.createObjectURL(combinedBlob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `podcast_${Date.now()}.wav`;
-            document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
     </script>
