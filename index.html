@@ -4,192 +4,378 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DNR — پادکست چندنفره</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    * {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
+    :root {
+      --bg: #F7F6F3;
+      --surface: #FFFFFF;
+      --border: #E4E2DC;
+      --text-primary: #1A1A18;
+      --text-secondary: #6B6A64;
+      --accent: #2D6A4F;
+      --accent-light: #E8F4EE;
+      --accent-hover: #245A42;
+      --shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+      --radius: 16px;
+    }
+
+    html,
     body {
-      background: #f5f3f0;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Vazirmatn', system-ui, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    body {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       min-height: 100vh;
-      padding: 20px;
+      padding: 2rem 1rem;
     }
+
     .container {
-      background: white;
-      border-radius: 24px;
-      padding: 30px;
-      max-width: 550px;
       width: 100%;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #1a1a1a;
-      margin-bottom: 8px;
-    }
-    p {
-      text-align: center;
-      color: #666;
-      margin-bottom: 25px;
-    }
-    textarea,
-    select,
-    button {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-family: inherit;
-      margin-bottom: 12px;
-    }
-    textarea {
-      height: 100px;
-      resize: vertical;
-    }
-    .row {
+      max-width: 680px;
       display: flex;
-      gap: 12px;
+      flex-direction: column;
+      gap: 1.5rem;
     }
-    .row>* {
+
+    header {
+      text-align: center;
+      padding-bottom: 0.5rem;
+    }
+
+    .logo {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 300;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    h1 span {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+    }
+
+    .field-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-family: 'Vazirmatn', system-ui, sans-serif;
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--text-primary);
+      background: var(--bg);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+      line-height: 1.8;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      background: #fff;
+    }
+
+    textarea::placeholder {
+      color: #BCBBB4;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+
+    .select-wrap {
       flex: 1;
+      min-width: 120px;
     }
-    button {
-      background: #2d6a4f;
-      color: white;
+
+    select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Vazirmatn', system-ui, sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      background: var(--bg);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6A64' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: left 1rem center;
+      padding-left: 2.5rem;
+    }
+
+    select:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-generate {
+      flex: 2;
+      min-width: 160px;
+      padding: 0.85rem 1.75rem;
+      background: var(--accent);
+      color: #fff;
       border: none;
+      border-radius: 10px;
+      font-family: 'Vazirmatn', system-ui, sans-serif;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.2s;
-      margin-top: 4px;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
-    button:hover {
-      background: #1e4d3a;
+
+    .btn-generate:hover {
+      background: var(--accent-hover);
     }
-    button:disabled {
-      opacity: 0.6;
+
+    .btn-generate:active {
+      transform: scale(0.98);
+    }
+
+    .btn-generate:disabled {
+      background: #B0C4BA;
       cursor: not-allowed;
+      transform: none;
     }
-    #result {
-      margin-top: 20px;
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
       display: none;
     }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .result-card {
+      background: var(--accent-light);
+      border: 1.5px solid #C2DDD1;
+      border-radius: var(--radius);
+      padding: 1.5rem 1.75rem;
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .result-card.visible {
+      display: flex;
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
     audio {
       width: 100%;
-      margin-top: 10px;
-    }
-    .download-btn {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: #e8f0fe;
-      color: #1a1a1a;
       border-radius: 8px;
+      outline: none;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      background: var(--surface);
+      border: 1.5px solid #C2DDD1;
+      border-radius: 8px;
+      font-family: 'Vazirmatn', system-ui, sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
       text-decoration: none;
-      border: 1px solid #ccc;
+      transition: background 0.2s;
+      align-self: flex-start;
     }
-    .download-btn:hover {
-      background: #d2e3fc;
+
+    .btn-download:hover {
+      background: #D4EDE3;
     }
-    .spinner {
+
+    .error-msg {
+      background: #FEF2F2;
+      border: 1.5px solid #FECACA;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      color: #991B1B;
+      font-size: 0.9rem;
       display: none;
+    }
+
+    .error-msg.visible {
+      display: block;
+    }
+
+    footer {
       text-align: center;
-      margin: 10px 0;
-    }
-    .error {
-      color: #b91c1c;
-      background: #fee2e2;
-      padding: 10px;
-      border-radius: 8px;
-      margin: 10px 0;
-      display: none;
-    }
-    .badge {
-      display: inline-block;
-      background: #e8f4ee;
-      color: #2d6a4f;
-      padding: 4px 12px;
-      border-radius: 20px;
       font-size: 0.75rem;
+      color: var(--text-secondary);
+      padding-top: 0.5rem;
     }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <h1>🎙️ DNR پادکست چندنفره</h1>
-    <p style="font-size:0.9rem;">موضوع رو وارد کن، پادکست رو بشنو</p>
+    <header>
+      <div class="logo">DNR</div>
+      <h1>پادکست <span>چندنفره</span> با هوش مصنوعی</h1>
+    </header>
 
-    <textarea id="topicInput" placeholder="مثلاً: آینده هوش مصنوعی"></textarea>
+    <div class="card">
+      <label class="field-label" for="topicInput">موضوع پادکست</label>
+      <textarea id="topicInput" placeholder="موضوع مورد نظر خود را وارد کنید..."></textarea>
 
-    <div class="row">
-      <select id="speakerCount">
-        <option value="1">۱ گوینده</option>
-        <option value="2" selected>۲ گوینده</option>
-        <option value="3">۳ گوینده</option>
-        <option value="4">۴ گوینده</option>
-        <option value="5">۵ گوینده</option>
-      </select>
-      <select id="durationSelect">
-        <option value="1">۱ دقیقه</option>
-        <option value="2" selected>۲ دقیقه</option>
-        <option value="3">۳ دقیقه</option>
-      </select>
+      <div class="controls">
+        <div class="select-wrap">
+          <label class="field-label" for="speakerCount">تعداد گوینده‌ها</label>
+          <select id="speakerCount">
+            <option value="1">۱ نفر</option>
+            <option value="2" selected>۲ نفر</option>
+            <option value="3">۳ نفر</option>
+            <option value="4">۴ نفر</option>
+            <option value="5">۵ نفر</option>
+          </select>
+        </div>
+
+        <div class="select-wrap">
+          <label class="field-label" for="durationSelect">مدت زمان</label>
+          <select id="durationSelect">
+            <option value="1">۱ دقیقه</option>
+            <option value="2" selected>۲ دقیقه</option>
+            <option value="3">۳ دقیقه</option>
+            <option value="5">۵ دقیقه</option>
+          </select>
+        </div>
+
+        <button class="btn-generate" id="generateBtn">
+          <div class="spinner" id="spinner"></div>
+          <span id="btnText">🎙️ ساخت پادکست</span>
+        </button>
+      </div>
     </div>
 
-    <button id="generateBtn">🎙️ ساخت پادکست</button>
+    <div class="error-msg" id="errorMsg"></div>
 
-    <div class="spinner" id="spinner">⏳ در حال ساخت...</div>
-    <div class="error" id="errorMsg"></div>
-
-    <div id="result">
+    <div class="result-card" id="resultCard">
+      <div class="result-label">🎧 پادکست شما آماده است</div>
       <audio id="audioPlayer" controls></audio>
-      <a class="download-btn" id="downloadBtn" download="podcast.wav">⬇️ دانلود پادکست</a>
+      <a class="btn-download" id="downloadBtn" download="podcast.wav">
+        ⬇️ دانلود فایل صوتی
+      </a>
     </div>
+
+    <footer>ساخته شده با Groq + Gemini TTS</footer>
   </div>
 
   <script>
     const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
 
-    document.getElementById('generateBtn').addEventListener('click', async () => {
-      const topic = document.getElementById('topicInput').value.trim();
+    document.getElementById("generateBtn").addEventListener("click", async () => {
+      const topic = document.getElementById("topicInput").value.trim();
       if (!topic) {
-        document.getElementById('errorMsg').textContent = '⚠️ لطفاً موضوع را وارد کنید';
-        document.getElementById('errorMsg').style.display = 'block';
+        document.getElementById("errorMsg").textContent = "⚠️ لطفاً یک موضوع وارد کنید.";
+        document.getElementById("errorMsg").classList.add("visible");
         return;
       }
 
-      const speakerCount = parseInt(document.getElementById('speakerCount').value);
-      const duration = parseInt(document.getElementById('durationSelect').value);
-      const btn = document.getElementById('generateBtn');
-      const spinner = document.getElementById('spinner');
-      const errorMsg = document.getElementById('errorMsg');
-      const resultDiv = document.getElementById('result');
+      const speakerCount = parseInt(document.getElementById("speakerCount").value);
+      const duration = parseInt(document.getElementById("durationSelect").value);
+      const btn = document.getElementById("generateBtn");
+      const spinner = document.getElementById("spinner");
+      const btnText = document.getElementById("btnText");
+      const errorMsg = document.getElementById("errorMsg");
+      const resultCard = document.getElementById("resultCard");
 
       btn.disabled = true;
-      spinner.style.display = 'block';
-      errorMsg.style.display = 'none';
-      resultDiv.style.display = 'none';
+      spinner.style.display = "block";
+      btnText.textContent = "در حال ساخت...";
+      errorMsg.classList.remove("visible");
+      resultCard.classList.remove("visible");
 
       try {
         const res = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic, duration, speakerCount })
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ topic, duration, speakerCount }),
         });
 
         const data = await res.json();
         if (data.error) throw new Error(data.error);
 
         if (!data.audioFiles || data.audioFiles.length === 0) {
-          throw new Error('هیچ صدایی تولید نشد');
+          throw new Error("هیچ فایل صوتی تولید نشد.");
         }
 
-        // چسباندن فایل‌ها
+        // تبدیل Base64 به Blob
         const audioBlobs = data.audioFiles.map(base64 => {
           const byteChars = atob(base64);
           const byteArray = new Uint8Array(byteChars.length);
@@ -199,6 +385,7 @@
           return byteArray;
         });
 
+        // چسباندن تمام فایل‌ها
         const totalLength = audioBlobs.reduce((sum, arr) => sum + arr.length, 0);
         const combined = new Uint8Array(totalLength);
         let offset = 0;
@@ -211,16 +398,17 @@
         const blob = pcmToWav(combined, 24000, 1, 16);
         const url = URL.createObjectURL(blob);
 
-        document.getElementById('audioPlayer').src = url;
-        document.getElementById('downloadBtn').href = url;
-        resultDiv.style.display = 'block';
+        document.getElementById("audioPlayer").src = url;
+        document.getElementById("downloadBtn").href = url;
+        resultCard.classList.add("visible");
 
       } catch (err) {
-        errorMsg.textContent = '❌ ' + err.message;
-        errorMsg.style.display = 'block';
+        errorMsg.textContent = "❌ " + err.message;
+        errorMsg.classList.add("visible");
       } finally {
         btn.disabled = false;
-        spinner.style.display = 'none';
+        spinner.style.display = "none";
+        btnText.textContent = "🎙️ ساخت پادکست";
       }
     });
 
@@ -239,10 +427,10 @@
       writeStr(12, 'fmt ');
       view.setUint32(16, 16, true);
       view.setUint16(20, 1, true);
-      view.setUint16(22, numChannels, true);
+      view.setUint16(22, 1, true);
       view.setUint32(24, sampleRate, true);
-      view.setUint32(28, sampleRate * numChannels * bitDepth / 8, true);
-      view.setUint16(32, numChannels * bitDepth / 8, true);
+      view.setUint32(28, sampleRate * 1 * bitDepth / 8, true);
+      view.setUint16(32, 1 * bitDepth / 8, true);
       view.setUint16(34, bitDepth, true);
       writeStr(36, 'data');
       view.setUint32(40, dataLength, true);
