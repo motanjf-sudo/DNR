@@ -1,210 +1,440 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DNR — پادکست چندنفره</title>
   <style>
+    /* ===== Reset & Base ===== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      background: #f5f3f0;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #f8f6f2;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       padding: 20px;
+      direction: rtl;
     }
+
+    /* ===== Container ===== */
     .container {
-      background: white;
-      border-radius: 24px;
-      padding: 30px;
-      max-width: 550px;
+      background: #ffffff;
+      border-radius: 32px;
+      padding: 40px 35px;
+      max-width: 520px;
       width: 100%;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.03);
+      transition: all 0.3s ease;
+      animation: fadeUp 0.6s ease-out;
     }
-    h1 {
-      text-align: center;
-      color: #1a1a1a;
-      margin-bottom: 8px;
+
+    @keyframes fadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .badge {
+
+    /* ===== Header ===== */
+    .logo {
       text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .logo h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e1e1e;
+      letter-spacing: -0.5px;
+    }
+
+    .logo h1 span {
+      background: linear-gradient(135deg, #2d6a4f, #409f7a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      margin-top: 2px;
+      margin-bottom: 28px;
+      font-weight: 400;
+    }
+
+    /* ===== Form ===== */
+    .field-label {
       display: block;
-      color: #2d6a4f;
-      font-size: 0.8rem;
-      background: #e8f4ee;
-      padding: 4px 12px;
-      border-radius: 20px;
-      display: inline-block;
-      margin: 0 auto 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #888;
+      margin-bottom: 6px;
     }
-    p {
-      text-align: center;
-      color: #666;
-      margin-bottom: 25px;
-    }
-    textarea,
-    select,
-    button {
+
+    textarea {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
+      min-height: 100px;
+      padding: 14px 18px;
+      border: 1.5px solid #eaeaea;
+      border-radius: 16px;
       font-size: 1rem;
       font-family: inherit;
-      margin-bottom: 12px;
-    }
-    textarea {
-      height: 100px;
+      background: #fafafa;
       resize: vertical;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      color: #1e1e1e;
+      line-height: 1.7;
     }
+
+    textarea:focus {
+      border-color: #2d6a4f;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.08);
+    }
+
+    textarea::placeholder {
+      color: #b5b5b5;
+    }
+
     .row {
       display: flex;
-      gap: 12px;
+      gap: 14px;
+      margin-top: 16px;
+      flex-wrap: wrap;
     }
+
     .row>* {
       flex: 1;
+      min-width: 120px;
     }
-    button {
-      background: #2d6a4f;
-      color: white;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-      margin-top: 4px;
-    }
-    button:hover {
-      background: #1e4d3a;
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    #result {
-      margin-top: 20px;
-      display: none;
-    }
-    audio {
+
+    select {
       width: 100%;
-      margin-top: 10px;
+      padding: 12px 16px;
+      border: 1.5px solid #eaeaea;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fafafa;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      color: #1e1e1e;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: left 14px center;
     }
-    .download-btn {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: #e8f0fe;
-      color: #1a1a1a;
-      border-radius: 8px;
-      text-decoration: none;
-      border: 1px solid #ccc;
+
+    select:focus {
+      border-color: #2d6a4f;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.08);
     }
-    .download-btn:hover {
-      background: #d2e3fc;
+
+    /* ===== Button ===== */
+    .btn-generate {
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: #2d6a4f;
+      color: #fff;
+      border: none;
+      border-radius: 18px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.15s, box-shadow 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: 0.3px;
+      position: relative;
+      overflow: hidden;
     }
+
+    .btn-generate:hover:not(:disabled) {
+      background: #1e4d3a;
+      transform: scale(0.98);
+      box-shadow: 0 12px 32px rgba(45, 106, 79, 0.25);
+    }
+
+    .btn-generate:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .btn-generate:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ===== Spinner ===== */
     .spinner {
       display: none;
-      text-align: center;
-      margin: 10px 0;
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid rgba(255, 255, 255, 0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
     }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .btn-generate.loading .spinner {
+      display: block;
+    }
+
+    .btn-generate.loading .btn-text {
+      opacity: 0.8;
+    }
+
+    /* ===== Result ===== */
+    #result {
+      margin-top: 28px;
+      display: none;
+      animation: fadeUp 0.5s ease-out;
+    }
+
+    #result.visible {
+      display: block;
+    }
+
+    .result-card {
+      background: #f6faf8;
+      border-radius: 20px;
+      padding: 22px 24px;
+      border: 1px solid #e0eee8;
+    }
+
+    .result-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #2d6a4f;
+      margin-bottom: 10px;
+    }
+
+    audio {
+      width: 100%;
+      border-radius: 12px;
+      outline: none;
+      margin-top: 4px;
+    }
+
+    audio::-webkit-media-controls-panel {
+      background: #e8f4ee;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 10px 22px;
+      background: #ffffff;
+      border: 1.5px solid #cfe2d9;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: inherit;
+      color: #1e4d3a;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+      cursor: pointer;
+    }
+
+    .download-btn:hover {
+      background: #edf6f2;
+      border-color: #2d6a4f;
+    }
+
+    /* ===== Error ===== */
     .error {
       color: #b91c1c;
-      background: #fee2e2;
-      padding: 10px;
-      border-radius: 8px;
-      margin: 10px 0;
+      background: #fee9e9;
+      padding: 14px 18px;
+      border-radius: 16px;
+      margin-top: 16px;
+      font-size: 0.9rem;
       display: none;
+      border: 1px solid #fccccc;
     }
-    .model-info {
+
+    .error.visible {
+      display: block;
+      animation: fadeUp 0.3s ease-out;
+    }
+
+    /* ===== Footer ===== */
+    .footer {
       text-align: center;
-      font-size: 0.75rem;
-      color: #6b6a64;
-      margin-top: 12px;
+      font-size: 0.7rem;
+      color: #aaa;
+      margin-top: 28px;
+      letter-spacing: 0.3px;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 20px;
+    }
+
+    .footer span {
+      background: linear-gradient(135deg, #2d6a4f, #409f7a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 500;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 480px) {
+      .container {
+        padding: 28px 20px;
+      }
+      .row {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .row>* {
+        min-width: unset;
+      }
+      .logo h1 {
+        font-size: 1.7rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎙️ DNR</h1>
-    <div style="text-align: center;">
-      <span class="badge">🤖 Qwen3.6-27B</span>
-    </div>
-    <p>پادکست چندنفره با هوش مصنوعی</p>
 
+  <div class="container">
+    <!-- Header -->
+    <div class="logo">
+      <h1>🎙️ <span>DNR</span></h1>
+      <p class="subtitle">پادکست چندنفره با هوش مصنوعی</p>
+    </div>
+
+    <!-- Form -->
     <textarea id="topicInput" placeholder="موضوع پادکست را وارد کنید..."></textarea>
 
     <div class="row">
-      <select id="speakerCount">
-        <option value="1">۱ گوینده</option>
-        <option value="2" selected>۲ گوینده</option>
-        <option value="3">۳ گوینده</option>
-        <option value="4">۴ گوینده</option>
-        <option value="5">۵ گوینده</option>
-      </select>
-      <select id="durationSelect">
-        <option value="1">۱ دقیقه</option>
-        <option value="2" selected>۲ دقیقه</option>
-        <option value="3">۳ دقیقه</option>
-        <option value="5">۵ دقیقه</option>
-      </select>
+      <div>
+        <label class="field-label">تعداد گوینده‌ها</label>
+        <select id="speakerCount">
+          <option value="1">۱ نفر</option>
+          <option value="2" selected>۲ نفر</option>
+          <option value="3">۳ نفر</option>
+          <option value="4">۴ نفر</option>
+          <option value="5">۵ نفر</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">مدت زمان</label>
+        <select id="durationSelect">
+          <option value="1">۱ دقیقه</option>
+          <option value="2" selected>۲ دقیقه</option>
+          <option value="3">۳ دقیقه</option>
+          <option value="5">۵ دقیقه</option>
+        </select>
+      </div>
     </div>
 
-    <button id="generateBtn">🎙️ ساخت پادکست</button>
+    <button class="btn-generate" id="generateBtn">
+      <span class="spinner"></span>
+      <span class="btn-text">✨ ساخت پادکست</span>
+    </button>
 
-    <div class="spinner" id="spinner">⏳ در حال ساخت...</div>
+    <!-- Error -->
     <div class="error" id="errorMsg"></div>
 
+    <!-- Result -->
     <div id="result">
-      <audio id="audioPlayer" controls></audio>
-      <a class="download-btn" id="downloadBtn" download="podcast.wav">⬇️ دانلود پادکست</a>
+      <div class="result-card">
+        <div class="result-label">🎧 پادکست شما آماده است</div>
+        <audio id="audioPlayer" controls></audio>
+        <a class="download-btn" id="downloadBtn" download="podcast.wav">
+          ⬇️ دانلود فایل صوتی
+        </a>
+      </div>
     </div>
 
-    <div class="model-info">🚀 مدل: Qwen3.6-27B (Groq) | Gemini TTS</div>
+    <!-- Footer -->
+    <div class="footer">
+      ساخته شده با <span>Gemini</span>
+    </div>
   </div>
 
   <script>
+    // ===== Config =====
     const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
 
-    document.getElementById('generateBtn').addEventListener('click', async () => {
-      const topic = document.getElementById('topicInput').value.trim();
+    // ===== DOM refs =====
+    const topicInput = document.getElementById('topicInput');
+    const speakerCount = document.getElementById('speakerCount');
+    const durationSelect = document.getElementById('durationSelect');
+    const generateBtn = document.getElementById('generateBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const resultDiv = document.getElementById('result');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // ===== Generate =====
+    generateBtn.addEventListener('click', async () => {
+      const topic = topicInput.value.trim();
       if (!topic) {
-        document.getElementById('errorMsg').textContent = '⚠️ لطفاً موضوع را وارد کنید';
-        document.getElementById('errorMsg').style.display = 'block';
+        showError('⚠️ لطفاً یک موضوع وارد کنید.');
         return;
       }
 
-      const speakerCount = parseInt(document.getElementById('speakerCount').value);
-      const duration = parseInt(document.getElementById('durationSelect').value);
-      const btn = document.getElementById('generateBtn');
-      const spinner = document.getElementById('spinner');
-      const errorMsg = document.getElementById('errorMsg');
-      const resultDiv = document.getElementById('result');
+      const count = parseInt(speakerCount.value);
+      const duration = parseInt(durationSelect.value);
 
-      btn.disabled = true;
-      spinner.style.display = 'block';
-      errorMsg.style.display = 'none';
-      resultDiv.style.display = 'none';
+      // UI: loading
+      generateBtn.disabled = true;
+      generateBtn.classList.add('loading');
+      hideError();
+      hideResult();
 
       try {
         const res = await fetch(WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic, duration, speakerCount })
+          body: JSON.stringify({ topic, duration, speakerCount: count })
         });
 
         const data = await res.json();
-        if (data.error) throw new Error(data.error);
 
-        if (!data.audioFiles || data.audioFiles.length === 0) {
-          throw new Error('هیچ صدایی تولید نشد');
+        if (!res.ok || data.error) {
+          throw new Error(data.error || data.details || 'خطا در تولید پادکست');
         }
 
-        // چسباندن فایل‌ها
+        if (!data.audioFiles || data.audioFiles.length === 0) {
+          throw new Error('هیچ فایل صوتی تولید نشد.');
+        }
+
+        // ===== Combine audio files =====
         const audioBlobs = data.audioFiles.map(base64 => {
           const byteChars = atob(base64);
           const byteArray = new Uint8Array(byteChars.length);
@@ -222,32 +452,52 @@
           offset += arr.length;
         }
 
-        // تبدیل به WAV
         const blob = pcmToWav(combined, 24000, 1, 16);
         const url = URL.createObjectURL(blob);
 
-        document.getElementById('audioPlayer').src = url;
-        document.getElementById('downloadBtn').href = url;
-        resultDiv.style.display = 'block';
+        audioPlayer.src = url;
+        downloadBtn.href = url;
+        showResult();
 
       } catch (err) {
-        errorMsg.textContent = '❌ ' + err.message;
-        errorMsg.style.display = 'block';
+        showError('❌ ' + err.message);
+        console.error(err);
       } finally {
-        btn.disabled = false;
-        spinner.style.display = 'none';
+        generateBtn.disabled = false;
+        generateBtn.classList.remove('loading');
       }
     });
 
+    // ===== Helpers =====
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.add('visible');
+    }
+
+    function hideError() {
+      errorMsg.classList.remove('visible');
+    }
+
+    function showResult() {
+      resultDiv.classList.add('visible');
+    }
+
+    function hideResult() {
+      resultDiv.classList.remove('visible');
+    }
+
+    // ===== PCM to WAV =====
     function pcmToWav(pcmData, sampleRate, numChannels, bitDepth) {
       const dataLength = pcmData.length;
       const buffer = new ArrayBuffer(44 + dataLength);
       const view = new DataView(buffer);
+
       const writeStr = (offset, str) => {
         for (let i = 0; i < str.length; i++) {
           view.setUint8(offset + i, str.charCodeAt(i));
         }
       };
+
       writeStr(0, 'RIFF');
       view.setUint32(4, 36 + dataLength, true);
       writeStr(8, 'WAVE');
@@ -261,9 +511,17 @@
       view.setUint16(34, bitDepth, true);
       writeStr(36, 'data');
       view.setUint32(40, dataLength, true);
+
       new Uint8Array(buffer, 44).set(pcmData);
       return new Blob([buffer], { type: 'audio/wav' });
     }
+
+    // ===== Keyboard shortcut =====
+    topicInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        generateBtn.click();
+      }
+    });
   </script>
 </body>
 </html>
