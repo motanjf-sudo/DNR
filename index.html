@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DNR — پادکست چندنفره</title>
   <style>
-    /* ===== استایل‌های یکسان با قبلی (برای اختصار حذف شده، ولی کد کامل در پایین است) ===== */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
+    /* ===== استایل‌های کامل ===== */
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
+
     :root {
       --bg: #F7F6F3;
       --surface: #FFFFFF;
@@ -24,16 +23,19 @@
       --accent-hover: #245A42;
       --shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
       --radius: 16px;
+      --radius-sm: 10px;
     }
+
     html,
     body {
       height: 100%;
       background: var(--bg);
       color: var(--text-primary);
-      font-family: 'Vazirmatn', system-ui, sans-serif;
+      font-family: 'Segoe UI', 'Vazirmatn', system-ui, sans-serif;
       font-weight: 300;
       line-height: 1.6;
     }
+
     body {
       display: flex;
       flex-direction: column;
@@ -42,6 +44,7 @@
       min-height: 100vh;
       padding: 2rem 1rem;
     }
+
     .container {
       width: 100%;
       max-width: 680px;
@@ -49,10 +52,12 @@
       flex-direction: column;
       gap: 1.5rem;
     }
+
     header {
       text-align: center;
       padding-bottom: 0.5rem;
     }
+
     .logo {
       font-size: 1rem;
       font-weight: 600;
@@ -61,16 +66,19 @@
       text-transform: uppercase;
       margin-bottom: 0.75rem;
     }
+
     h1 {
       font-size: clamp(1.6rem, 4vw, 2.2rem);
       font-weight: 300;
       color: var(--text-primary);
       letter-spacing: -0.02em;
     }
+
     h1 span {
       color: var(--accent);
       font-weight: 600;
     }
+
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -78,6 +86,7 @@
       padding: 1.75rem;
       box-shadow: var(--shadow);
     }
+
     .field-label {
       font-size: 0.75rem;
       font-weight: 600;
@@ -87,13 +96,14 @@
       margin-bottom: 0.75rem;
       display: block;
     }
+
     textarea {
       width: 100%;
       min-height: 100px;
       border: 1.5px solid var(--border);
-      border-radius: 10px;
+      border-radius: var(--radius-sm);
       padding: 1rem 1.25rem;
-      font-family: 'Vazirmatn', system-ui, sans-serif;
+      font-family: inherit;
       font-size: 1rem;
       font-weight: 300;
       color: var(--text-primary);
@@ -103,13 +113,16 @@
       transition: border-color 0.2s;
       line-height: 1.8;
     }
+
     textarea:focus {
       border-color: var(--accent);
       background: #fff;
     }
+
     textarea::placeholder {
       color: #BCBBB4;
     }
+
     .controls {
       display: flex;
       gap: 1rem;
@@ -117,16 +130,18 @@
       flex-wrap: wrap;
       margin-top: 1.25rem;
     }
+
     .select-wrap {
       flex: 1;
       min-width: 120px;
     }
+
     select {
       width: 100%;
       padding: 0.75rem 1rem;
       border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-family: 'Vazirmatn', system-ui, sans-serif;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
       font-size: 0.9rem;
       color: var(--text-primary);
       background: var(--bg);
@@ -139,9 +154,11 @@
       background-position: left 1rem center;
       padding-left: 2.5rem;
     }
+
     select:focus {
       border-color: var(--accent);
     }
+
     .btn-generate {
       flex: 2;
       min-width: 160px;
@@ -149,8 +166,8 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      border-radius: 10px;
-      font-family: 'Vazirmatn', system-ui, sans-serif;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
@@ -160,17 +177,21 @@
       justify-content: center;
       gap: 0.5rem;
     }
-    .btn-generate:hover {
+
+    .btn-generate:hover:not(:disabled) {
       background: var(--accent-hover);
     }
-    .btn-generate:active {
+
+    .btn-generate:active:not(:disabled) {
       transform: scale(0.98);
     }
+
     .btn-generate:disabled {
       background: #B0C4BA;
       cursor: not-allowed;
       transform: none;
     }
+
     .spinner {
       width: 18px;
       height: 18px;
@@ -180,11 +201,13 @@
       animation: spin 0.7s linear infinite;
       display: none;
     }
+
     @keyframes spin {
       to {
         transform: rotate(360deg);
       }
     }
+
     .result-card {
       background: var(--accent-light);
       border: 1.5px solid #C2DDD1;
@@ -194,9 +217,11 @@
       flex-direction: column;
       gap: 1rem;
     }
+
     .result-card.visible {
       display: flex;
     }
+
     .result-label {
       font-size: 0.75rem;
       font-weight: 600;
@@ -204,11 +229,13 @@
       text-transform: uppercase;
       color: var(--accent);
     }
+
     audio {
       width: 100%;
       border-radius: 8px;
       outline: none;
     }
+
     .btn-download {
       display: inline-flex;
       align-items: center;
@@ -217,7 +244,7 @@
       background: var(--surface);
       border: 1.5px solid #C2DDD1;
       border-radius: 8px;
-      font-family: 'Vazirmatn', system-ui, sans-serif;
+      font-family: inherit;
       font-size: 0.875rem;
       font-weight: 600;
       color: var(--accent);
@@ -226,26 +253,50 @@
       transition: background 0.2s;
       align-self: flex-start;
     }
+
     .btn-download:hover {
       background: #D4EDE3;
     }
+
     .error-msg {
       background: #FEF2F2;
       border: 1.5px solid #FECACA;
-      border-radius: 10px;
+      border-radius: var(--radius-sm);
       padding: 1rem 1.25rem;
       color: #991B1B;
       font-size: 0.9rem;
       display: none;
     }
+
     .error-msg.visible {
       display: block;
     }
+
     footer {
       text-align: center;
       font-size: 0.75rem;
       color: var(--text-secondary);
       padding-top: 0.5rem;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 480px) {
+      .controls {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .select-wrap {
+        min-width: 100%;
+      }
+
+      .btn-generate {
+        min-width: 100%;
+      }
+
+      .card {
+        padding: 1.25rem;
+      }
     }
   </style>
 </head>
@@ -254,6 +305,7 @@
     <header>
       <div class="logo">DNR</div>
       <h1>پادکست <span>چندنفره</span> با هوش مصنوعی</h1>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">از ۱ تا ۵ گوینده انتخاب کنید</p>
     </header>
 
     <div class="card">
@@ -273,7 +325,7 @@
         </div>
 
         <div class="select-wrap">
-          <label class="field-label" for="durationSelect">مدت زمان</label>
+          <label class="field-label" for="durationSelect">مدت زمان (دقیقه)</label>
           <select id="durationSelect">
             <option value="1">۱ دقیقه</option>
             <option value="2" selected>۲ دقیقه</option>
@@ -303,45 +355,64 @@
   </div>
 
   <script>
+    // ============================================================
+    // DNR Podcast Studio — Frontend Script
+    // ============================================================
+
     const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
 
-    document.getElementById("generateBtn").addEventListener("click", async () => {
-      const topic = document.getElementById("topicInput").value.trim();
+    // ===== المنت‌ها =====
+    const topicInput = document.getElementById('topicInput');
+    const speakerCount = document.getElementById('speakerCount');
+    const durationSelect = document.getElementById('durationSelect');
+    const generateBtn = document.getElementById('generateBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+    const errorMsg = document.getElementById('errorMsg');
+    const resultCard = document.getElementById('resultCard');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // ===== تولید پادکست =====
+    generateBtn.addEventListener('click', async () => {
+      const topic = topicInput.value.trim();
       if (!topic) {
-        document.getElementById("errorMsg").textContent = "⚠️ لطفاً یک موضوع وارد کنید.";
-        document.getElementById("errorMsg").classList.add("visible");
+        showError('⚠️ لطفاً یک موضوع وارد کنید.');
         return;
       }
 
-      const speakerCount = parseInt(document.getElementById("speakerCount").value);
-      const duration = parseInt(document.getElementById("durationSelect").value);
-      const btn = document.getElementById("generateBtn");
-      const spinner = document.getElementById("spinner");
-      const btnText = document.getElementById("btnText");
-      const errorMsg = document.getElementById("errorMsg");
-      const resultCard = document.getElementById("resultCard");
+      const count = parseInt(speakerCount.value);
+      const duration = parseInt(durationSelect.value);
 
-      btn.disabled = true;
-      spinner.style.display = "block";
-      btnText.textContent = "در حال ساخت...";
-      errorMsg.classList.remove("visible");
-      resultCard.classList.remove("visible");
+      // غیرفعال کردن دکمه
+      generateBtn.disabled = true;
+      spinner.style.display = 'block';
+      btnText.textContent = 'در حال ساخت...';
+      hideError();
+      hideResult();
 
       try {
-        const res = await fetch(WORKER_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic, duration, speakerCount }),
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topic: topic,
+            duration: duration,
+            speakerCount: count
+          })
         });
 
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
+        const data = await response.json();
 
-        if (!data.audioFiles || data.audioFiles.length === 0) {
-          throw new Error("هیچ فایل صوتی تولید نشد.");
+        if (!response.ok || data.error) {
+          throw new Error(data.error || data.details || 'خطا در تولید پادکست');
         }
 
-        // تبدیل Base64 به Blob
+        if (!data.audioFiles || data.audioFiles.length === 0) {
+          throw new Error('هیچ فایل صوتی تولید نشد. لطفاً دوباره تلاش کنید.');
+        }
+
+        // ===== تبدیل و چسباندن فایل‌ها =====
         const audioBlobs = data.audioFiles.map(base64 => {
           const byteChars = atob(base64);
           const byteArray = new Uint8Array(byteChars.length);
@@ -351,7 +422,6 @@
           return byteArray;
         });
 
-        // چسباندن تمام فایل‌ها
         const totalLength = audioBlobs.reduce((sum, arr) => sum + arr.length, 0);
         const combined = new Uint8Array(totalLength);
         let offset = 0;
@@ -360,49 +430,84 @@
           offset += arr.length;
         }
 
-        // تبدیل به WAV
+        // ===== تبدیل به WAV =====
         const blob = pcmToWav(combined, 24000, 1, 16);
         const url = URL.createObjectURL(blob);
 
-        document.getElementById("audioPlayer").src = url;
-        document.getElementById("downloadBtn").href = url;
-        resultCard.classList.add("visible");
+        // ===== نمایش نتیجه =====
+        audioPlayer.src = url;
+        downloadBtn.href = url;
+        showResult();
 
-      } catch (err) {
-        errorMsg.textContent = "❌ " + err.message;
-        errorMsg.classList.add("visible");
+        // اگر خطاهای جزئی وجود داشت، نمایش بده
+        if (data.errors && data.errors.length > 0) {
+          console.warn('خطاهای جزئی:', data.errors);
+        }
+
+      } catch (error) {
+        showError('❌ ' + error.message);
+        console.error('Error:', error);
       } finally {
-        btn.disabled = false;
-        spinner.style.display = "none";
-        btnText.textContent = "🎙️ ساخت پادکست";
+        generateBtn.disabled = false;
+        spinner.style.display = 'none';
+        btnText.textContent = '🎙️ ساخت پادکست';
       }
     });
 
+    // ===== توابع کمکی =====
+    function showError(message) {
+      errorMsg.textContent = message;
+      errorMsg.classList.add('visible');
+    }
+
+    function hideError() {
+      errorMsg.classList.remove('visible');
+    }
+
+    function showResult() {
+      resultCard.classList.add('visible');
+    }
+
+    function hideResult() {
+      resultCard.classList.remove('visible');
+    }
+
+    // ===== تبدیل PCM به WAV =====
     function pcmToWav(pcmData, sampleRate, numChannels, bitDepth) {
       const dataLength = pcmData.length;
       const buffer = new ArrayBuffer(44 + dataLength);
       const view = new DataView(buffer);
+
       const writeStr = (offset, str) => {
         for (let i = 0; i < str.length; i++) {
           view.setUint8(offset + i, str.charCodeAt(i));
         }
       };
+
       writeStr(0, 'RIFF');
       view.setUint32(4, 36 + dataLength, true);
       writeStr(8, 'WAVE');
       writeStr(12, 'fmt ');
       view.setUint32(16, 16, true);
       view.setUint16(20, 1, true);
-      view.setUint16(22, 1, true);
+      view.setUint16(22, numChannels, true);
       view.setUint32(24, sampleRate, true);
-      view.setUint32(28, sampleRate * 1 * bitDepth / 8, true);
-      view.setUint16(32, 1 * bitDepth / 8, true);
+      view.setUint32(28, sampleRate * numChannels * bitDepth / 8, true);
+      view.setUint16(32, numChannels * bitDepth / 8, true);
       view.setUint16(34, bitDepth, true);
       writeStr(36, 'data');
       view.setUint32(40, dataLength, true);
+
       new Uint8Array(buffer, 44).set(pcmData);
       return new Blob([buffer], { type: 'audio/wav' });
     }
+
+    // ===== Enter =====
+    topicInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        generateBtn.click();
+      }
+    });
   </script>
 </body>
 </html>
