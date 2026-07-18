@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DNR — پادکست چندنفره</title>
+  <title>DNR — پادکست چندنفره با Gemini 2.5 Pro</title>
   <style>
     /* ===== Reset & Base ===== */
     * {
@@ -23,7 +23,6 @@
       direction: rtl;
     }
 
-    /* ===== Container ===== */
     .container {
       background: #ffffff;
       border-radius: 32px;
@@ -46,7 +45,6 @@
       }
     }
 
-    /* ===== Header ===== */
     .logo {
       text-align: center;
       margin-bottom: 6px;
@@ -74,7 +72,18 @@
       font-weight: 400;
     }
 
-    /* ===== Form ===== */
+    .badge {
+      display: inline-block;
+      background: #e8f4ee;
+      color: #2d6a4f;
+      padding: 2px 14px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin-bottom: 4px;
+    }
+
     .field-label {
       display: block;
       font-size: 0.75rem;
@@ -147,7 +156,6 @@
       box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.08);
     }
 
-    /* ===== Button ===== */
     .btn-generate {
       width: 100%;
       margin-top: 20px;
@@ -187,7 +195,6 @@
       box-shadow: none;
     }
 
-    /* ===== Spinner ===== */
     .spinner {
       display: none;
       width: 22px;
@@ -213,7 +220,6 @@
       opacity: 0.8;
     }
 
-    /* ===== Result ===== */
     #result {
       margin-top: 28px;
       display: none;
@@ -274,7 +280,6 @@
       border-color: #2d6a4f;
     }
 
-    /* ===== Error ===== */
     .error {
       color: #b91c1c;
       background: #fee9e9;
@@ -291,7 +296,6 @@
       animation: fadeUp 0.3s ease-out;
     }
 
-    /* ===== Footer ===== */
     .footer {
       text-align: center;
       font-size: 0.7rem;
@@ -309,7 +313,6 @@
       font-weight: 500;
     }
 
-    /* ===== Responsive ===== */
     @media (max-width: 480px) {
       .container {
         padding: 28px 20px;
@@ -330,13 +333,15 @@
 <body>
 
   <div class="container">
-    <!-- Header -->
     <div class="logo">
       <h1>🎙️ <span>DNR</span></h1>
-      <p class="subtitle">پادکست چندنفره با هوش مصنوعی</p>
+      <p class="subtitle">
+        <span class="badge">Gemini 2.5 Pro</span>
+        <br style="display: none;" />
+        پادکست چندنفره با هوش مصنوعی
+      </p>
     </div>
 
-    <!-- Form -->
     <textarea id="topicInput" placeholder="موضوع پادکست را وارد کنید..."></textarea>
 
     <div class="row">
@@ -366,10 +371,8 @@
       <span class="btn-text">✨ ساخت پادکست</span>
     </button>
 
-    <!-- Error -->
     <div class="error" id="errorMsg"></div>
 
-    <!-- Result -->
     <div id="result">
       <div class="result-card">
         <div class="result-label">🎧 پادکست شما آماده است</div>
@@ -380,17 +383,14 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
-      ساخته شده با <span>Gemini</span>
+      ساخته شده با <span>Gemini 2.5 Pro</span>
     </div>
   </div>
 
   <script>
-    // ===== Config =====
     const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
 
-    // ===== DOM refs =====
     const topicInput = document.getElementById('topicInput');
     const speakerCount = document.getElementById('speakerCount');
     const durationSelect = document.getElementById('durationSelect');
@@ -400,7 +400,6 @@
     const audioPlayer = document.getElementById('audioPlayer');
     const downloadBtn = document.getElementById('downloadBtn');
 
-    // ===== Generate =====
     generateBtn.addEventListener('click', async () => {
       const topic = topicInput.value.trim();
       if (!topic) {
@@ -411,7 +410,6 @@
       const count = parseInt(speakerCount.value);
       const duration = parseInt(durationSelect.value);
 
-      // UI: loading
       generateBtn.disabled = true;
       generateBtn.classList.add('loading');
       hideError();
@@ -434,7 +432,6 @@
           throw new Error('هیچ فایل صوتی تولید نشد.');
         }
 
-        // ===== Combine audio files =====
         const audioBlobs = data.audioFiles.map(base64 => {
           const byteChars = atob(base64);
           const byteArray = new Uint8Array(byteChars.length);
@@ -468,7 +465,6 @@
       }
     });
 
-    // ===== Helpers =====
     function showError(msg) {
       errorMsg.textContent = msg;
       errorMsg.classList.add('visible');
@@ -486,7 +482,6 @@
       resultDiv.classList.remove('visible');
     }
 
-    // ===== PCM to WAV =====
     function pcmToWav(pcmData, sampleRate, numChannels, bitDepth) {
       const dataLength = pcmData.length;
       const buffer = new ArrayBuffer(44 + dataLength);
@@ -516,7 +511,6 @@
       return new Blob([buffer], { type: 'audio/wav' });
     }
 
-    // ===== Keyboard shortcut =====
     topicInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && e.ctrlKey) {
         generateBtn.click();
