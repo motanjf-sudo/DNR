@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DNR — پادکست چندنفره با Qwen3.6-27B</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600&display=swap" rel="stylesheet">
+  <title>DNR — پادکست چندنفره</title>
   <style>
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
     body {
       background: #f5f3f0;
-      font-family: 'Vazirmatn', system-ui, sans-serif;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -32,18 +30,7 @@
     h1 {
       text-align: center;
       color: #1a1a1a;
-      margin-bottom: 4px;
-    }
-    .badge {
-      text-align: center;
-      display: block;
-      color: #2d6a4f;
-      font-size: 0.8rem;
-      background: #e8f4ee;
-      padding: 4px 12px;
-      border-radius: 20px;
-      display: inline-block;
-      margin: 0 auto 20px;
+      margin-bottom: 8px;
     }
     p {
       text-align: center;
@@ -122,23 +109,14 @@
       margin: 10px 0;
       display: none;
     }
-    .model-info {
-      text-align: center;
-      font-size: 0.75rem;
-      color: #6b6a64;
-      margin-top: 12px;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🎙️ DNR</h1>
-    <div style="text-align: center;">
-      <span class="badge">🤖 Qwen3.6-27B</span>
-    </div>
-    <p>پادکست چندنفره با هوش مصنوعی</p>
+    <h1>🎙️ DNR پادکست چندنفره</h1>
+    <p>موضوع رو وارد کن، پادکست رو بشنو</p>
 
-    <textarea id="topicInput" placeholder="موضوع پادکست را وارد کنید..."></textarea>
+    <textarea id="topicInput" placeholder="مثلاً: آینده هوش مصنوعی"></textarea>
 
     <div class="row">
       <select id="speakerCount">
@@ -152,7 +130,6 @@
         <option value="1">۱ دقیقه</option>
         <option value="2" selected>۲ دقیقه</option>
         <option value="3">۳ دقیقه</option>
-        <option value="5">۵ دقیقه</option>
       </select>
     </div>
 
@@ -165,8 +142,6 @@
       <audio id="audioPlayer" controls></audio>
       <a class="download-btn" id="downloadBtn" download="podcast.wav">⬇️ دانلود پادکست</a>
     </div>
-
-    <div class="model-info">🚀 مدل: Qwen3.6-27B (Groq) | Gemini TTS</div>
   </div>
 
   <script>
