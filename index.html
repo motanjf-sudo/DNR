@@ -1,70 +1,145 @@
-// public/script.js - مخصوص GitHub Pages
-
-// آدرس Worker خود را در اینجا بگذارید
-const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
-
-// وقتی کاربر فرم را ارسال می‌کند
-document.getElementById('podcastForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // گرفتن اطلاعات از صفحه
-    const topic = document.getElementById('topic').value.trim();
-    const duration = parseInt(document.getElementById('duration').value) || 3;
-
-    if (!topic) {
-        alert('لطفاً یک موضوع وارد کنید!');
-        return;
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>پادکست‌ساز دونفره</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      font-family: Tahoma, sans-serif;
+      background: #1e1e2f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
+    .card {
+      background: #2d2d44;
+      color: #eee;
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    h1 { text-align: center; margin-bottom: 8px; }
+    p.desc { text-align: center; color: #aaa; margin-bottom: 25px; }
+    label { display: block; margin: 15px 0 5px; font-weight: bold; }
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      background: #3b3b5a;
+      color: #fff;
+      font-size: 1rem;
+    }
+    textarea { height: 100px; resize: vertical; }
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      background: #6c5ce7;
+      border: none;
+      border-radius: 30px;
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover { background: #5a4bd1; transform: scale(0.98); }
+    #loading { text-align: center; margin: 20px 0; display: none; }
+    #result { margin-top: 25px; display: none; }
+    #scriptBox {
+      background: #1e1e2f;
+      padding: 15px;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      max-height: 350px;
+      overflow-y: auto;
+      border: 1px solid #4a4a6a;
+      font-family: monospace;
+      line-height: 1.8;
+    }
+    #copyBtn {
+      background: #00b894;
+      margin-top: 10px;
+      padding: 8px;
+      font-size: 0.9rem;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>🎙️ پادکست دونفره</h1>
+  <p class="desc">موضوع رو بده، گفت‌وگو بگیر</p>
 
-    // نمایش وضعیت "در حال ساخت"
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('result').style.display = 'none';
-    document.getElementById('generateBtn').disabled = true;
+  <form id="form">
+    <label>موضوع:</label>
+    <textarea id="topic" placeholder="مثلاً: تأثیر هوش مصنوعی روی آینده"></textarea>
+
+    <label>مدت (دقیقه):</label>
+    <input type="number" id="duration" value="3" min="1" max="10">
+
+    <button type="submit">🚀 بساز پادکست</button>
+  </form>
+
+  <div id="loading">⏳ در حال ساخت گفت‌وگو...</div>
+
+  <div id="result">
+    <h3>📝 گفت‌وگو:</h3>
+    <div id="scriptBox"></div>
+    <button id="copyBtn">📋 کپی متن</button>
+  </div>
+</div>
+
+<script>
+  const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
+
+  const form = document.getElementById('form');
+  const topic = document.getElementById('topic');
+  const duration = document.getElementById('duration');
+  const loading = document.getElementById('loading');
+  const result = document.getElementById('result');
+  const scriptBox = document.getElementById('scriptBox');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!topic.value.trim()) return alert('لطفاً موضوع رو وارد کن');
+
+    loading.style.display = 'block';
+    result.style.display = 'none';
 
     try {
-        // ارسال موضوع به Worker
-        const response = await fetch(WORKER_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                topic: topic,
-                duration: duration
-            })
-        });
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: topic.value.trim(),
+          duration: parseInt(duration.value) || 3
+        })
+      });
 
-        const data = await response.json();
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || 'خطا');
 
-        if (!response.ok || data.error) {
-            throw new Error(data.error || `خطا: ${response.status}`);
-        }
+      scriptBox.textContent = data.script;
+      result.style.display = 'block';
 
-        // نمایش اسکریپت تولید شده
-        document.getElementById('scriptOutput').textContent = data.script;
-        document.getElementById('providerInfo').textContent = 
-            `✅ تولید شده با: ${data.provider} | مدت زمان: ${duration} دقیقه`;
-        document.getElementById('result').style.display = 'block';
-
-        // ذخیره اسکریپت برای کپی کردن
-        window.currentScript = data.script;
-
-    } catch (error) {
-        alert(`❌ خطا: ${error.message}`);
-        console.error('Error:', error);
+    } catch (err) {
+      alert('❌ خطا: ' + err.message);
     } finally {
-        // پنهان کردن وضعیت "در حال ساخت"
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('generateBtn').disabled = false;
+      loading.style.display = 'none';
     }
-});
+  });
 
-// دکمه کپی کردن متن
-document.getElementById('copyBtn').addEventListener('click', () => {
-    const script = document.getElementById('scriptOutput').textContent;
-    navigator.clipboard.writeText(script).then(() => {
-        alert('✅ متن کپی شد!');
-    }).catch(() => {
-        alert('❌ کپی ناموفق!');
-    });
-});
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(scriptBox.textContent)
+      .then(() => alert('✅ کپی شد'));
+  });
+</script>
+</body>
+</html>
