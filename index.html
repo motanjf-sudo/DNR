@@ -6,6 +6,8 @@
 <title>DNR — پادکست با هوش مصنوعی</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -48,12 +50,48 @@
   textarea:focus { border-color: var(--accent); background: #fff; }
   textarea::placeholder { color: #C0BEB8; }
   #topicInput { min-height: 80px; }
-  #instructionsInput { min-height: 75px; }
+  #instructionsInput { min-height: 70px; }
   .divider {
     display: flex; align-items: center; gap: 0.75rem;
     color: var(--muted); font-size: 0.75rem; font-weight: 500;
   }
   .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* File Upload */
+  .file-upload-area {
+    border: 2px dashed var(--border); border-radius: 12px;
+    padding: 1.25rem; text-align: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .file-upload-area:hover { border-color: var(--accent); background: var(--accent-light); }
+  .file-upload-area.has-file { border-color: var(--accent); background: var(--accent-light); border-style: solid; }
+  .file-upload-area.dragging { border-color: var(--accent); background: var(--accent-light); }
+  .file-upload-area input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .file-upload-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .file-upload-text { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+  .file-upload-text strong { color: var(--accent); font-weight: 600; }
+  .file-upload-hint { font-size: 0.72rem; color: #B0AEA8; margin-top: 0.25rem; }
+  .file-info {
+    display: none; align-items: center; gap: 0.6rem;
+    background: var(--surface); border-radius: 8px; padding: 0.6rem 0.9rem;
+    margin-top: 0.75rem; border: 1px solid #C2DDD1;
+  }
+  .file-info.visible { display: flex; }
+  .file-info-name { font-size: 0.85rem; font-weight: 500; color: var(--text); flex: 1; text-align: right; }
+  .file-info-size { font-size: 0.75rem; color: var(--muted); }
+  .file-remove {
+    background: none; border: none; cursor: pointer; color: #B0AEA8;
+    font-size: 1rem; padding: 0 0.25rem; transition: color 0.2s; line-height: 1;
+  }
+  .file-remove:hover { color: #991B1B; }
+  .file-reading { font-size: 0.8rem; color: var(--accent); margin-top: 0.5rem; display: none; }
+  .file-reading.visible { display: block; }
+  .file-chars { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; display: none; }
+  .file-chars.visible { display: block; }
+
   .row { display: flex; gap: 1rem; flex-wrap: wrap; }
   .field { flex: 1; min-width: 130px; }
   select {
@@ -66,45 +104,38 @@
   }
   select:focus { border-color: var(--accent); }
 
-  /* Toggle Switch */
   .toggle-row {
     display: flex; align-items: center; justify-content: space-between;
     background: var(--bg); border: 1.5px solid var(--border);
-    border-radius: 12px; padding: 0.85rem 1rem;
-    cursor: pointer; transition: border-color 0.2s;
+    border-radius: 12px; padding: 0.85rem 1rem; cursor: pointer; transition: border-color 0.2s;
   }
   .toggle-row:hover { border-color: var(--accent); }
   .toggle-row.active { border-color: var(--accent); background: var(--accent-light); }
   .toggle-info { display: flex; align-items: center; gap: 0.6rem; }
-  .toggle-icon { font-size: 1.1rem; }
   .toggle-text { display: flex; flex-direction: column; gap: 2px; }
   .toggle-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
   .toggle-desc { font-size: 0.75rem; color: var(--muted); }
   .toggle-cost { font-size: 0.72rem; color: #B45309; font-weight: 500; }
   .toggle-row.active .toggle-cost { color: var(--accent); }
-  .switch {
-    position: relative; width: 44px; height: 24px; flex-shrink: 0;
-  }
+  .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider {
     position: absolute; inset: 0; background: #D1D5DB;
-    border-radius: 40px; transition: background 0.25s;
-    cursor: pointer;
+    border-radius: 40px; transition: background 0.25s; cursor: pointer;
   }
   .slider::before {
-    content: ''; position: absolute;
-    width: 18px; height: 18px; background: white;
-    border-radius: 50%; top: 3px; right: 3px;
-    transition: transform 0.25s; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    content: ''; position: absolute; width: 18px; height: 18px; background: white;
+    border-radius: 50%; top: 3px; right: 3px; transition: transform 0.25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   }
   input:checked + .slider { background: var(--accent); }
   input:checked + .slider::before { transform: translateX(-20px); }
 
   .btn {
-    width: 100%; padding: 0.95rem;
-    background: var(--accent); color: #fff; border: none; border-radius: 14px;
-    font-family: 'Vazirmatn', sans-serif; font-size: 1rem; font-weight: 600;
-    cursor: pointer; transition: background 0.2s, transform 0.1s;
+    width: 100%; padding: 0.95rem; background: var(--accent); color: #fff;
+    border: none; border-radius: 14px; font-family: 'Vazirmatn', sans-serif;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
     display: flex; align-items: center; justify-content: center; gap: 0.6rem;
   }
   .btn:hover:not(:disabled) { background: var(--accent-hover); }
@@ -116,6 +147,7 @@
     animation: spin 0.7s linear infinite; display: none; flex-shrink: 0;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
   .progress-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 1.5rem 1.75rem;
@@ -128,6 +160,7 @@
   .progress-bar-wrap { background: var(--border); border-radius: 40px; height: 6px; overflow: hidden; }
   .progress-bar { height: 100%; background: var(--accent); border-radius: 40px; transition: width 0.4s ease; width: 0%; }
   .progress-status { font-size: 0.85rem; color: var(--muted); min-height: 1.2em; }
+
   .result-card {
     background: var(--accent-light); border: 1.5px solid #C2DDD1;
     border-radius: var(--radius); padding: 1.5rem 1.75rem;
@@ -168,17 +201,35 @@
       <textarea id="topicInput" placeholder="مثلاً: فشار خون، آینده هوش مصنوعی، تأثیر شبکه‌های اجتماعی..."></textarea>
     </div>
 
+    <div class="divider">فایل منبع (اختیاری)</div>
+
+    <div>
+      <label>آپلود فایل — PDF، Word یا متن</label>
+      <div class="file-upload-area" id="uploadArea">
+        <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" onchange="handleFile(this.files[0])">
+        <div class="file-upload-icon">📎</div>
+        <div class="file-upload-text"><strong>کلیک کنید</strong> یا فایل را اینجا بکشید</div>
+        <div class="file-upload-hint">PDF، Word (.docx)، یا متن (.txt) — Gemini کل متن را می‌خواند</div>
+      </div>
+      <div class="file-info" id="fileInfo">
+        <span class="file-info-name" id="fileName"></span>
+        <span class="file-info-size" id="fileSize"></span>
+        <button class="file-remove" onclick="removeFile()" title="حذف فایل">✕</button>
+      </div>
+      <div class="file-reading" id="fileReading">⏳ در حال خواندن فایل...</div>
+      <div class="file-chars" id="fileChars"></div>
+    </div>
+
     <div class="divider">دستورالعمل اضافی (اختیاری)</div>
 
     <div>
       <label for="instructionsInput">به Gemini بگو چطور پادکست بسازه</label>
-      <textarea id="instructionsInput" placeholder="مثلاً: لحن علمی باشه، از آمار استفاده کن، مثال‌های ایرانی بزن، برای عموم مردم ساده توضیح بده..."></textarea>
+      <textarea id="instructionsInput" placeholder="مثلاً: لحن علمی باشه، از آمار استفاده کن، برای عموم مردم ساده توضیح بده..."></textarea>
     </div>
 
-    <!-- Toggle سرچ -->
-    <div class="toggle-row" id="toggleRow" onclick="toggleSearch()">
+    <div class="toggle-row" id="toggleRow" onclick="toggleSearch(event)">
       <div class="toggle-info">
-        <span class="toggle-icon">🔍</span>
+        <span style="font-size:1.1rem">🔍</span>
         <div class="toggle-text">
           <span class="toggle-title">جستجو در اینترنت</span>
           <span class="toggle-desc">Gemini اطلاعات به‌روز جستجو می‌کند</span>
@@ -186,7 +237,7 @@
         </div>
       </div>
       <label class="switch" onclick="event.stopPropagation()">
-        <input type="checkbox" id="searchToggle" onchange="toggleSearch()">
+        <input type="checkbox" id="searchToggle" onchange="updateToggleUI()">
         <span class="slider"></span>
       </label>
     </div>
@@ -242,28 +293,110 @@
 </div>
 
 <script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
 const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
+let extractedFileText = null;
 
-const btn = document.getElementById("generateBtn");
-const spinner = document.getElementById("spinner");
-const btnText = document.getElementById("btnText");
-const errorMsg = document.getElementById("errorMsg");
-const progressCard = document.getElementById("progressCard");
-const progressBar = document.getElementById("progressBar");
-const progressCount = document.getElementById("progressCount");
-const progressStatus = document.getElementById("progressStatus");
-const resultCard = document.getElementById("resultCard");
-const audioPlayer = document.getElementById("audioPlayer");
-const downloadBtn = document.getElementById("downloadBtn");
+// ===== File Handling =====
+async function handleFile(file) {
+  if (!file) return;
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInfo = document.getElementById('fileInfo');
+  const fileName = document.getElementById('fileName');
+  const fileSize = document.getElementById('fileSize');
+  const fileReading = document.getElementById('fileReading');
+  const fileChars = document.getElementById('fileChars');
 
-function toggleSearch() {
+  uploadArea.classList.add('has-file');
+  fileInfo.classList.add('visible');
+  fileName.textContent = file.name;
+  fileSize.textContent = formatSize(file.size);
+  fileReading.classList.add('visible');
+  fileChars.classList.remove('visible');
+  extractedFileText = null;
+
+  try {
+    const ext = file.name.split('.').pop().toLowerCase();
+
+    if (ext === 'pdf') {
+      extractedFileText = await extractPDF(file);
+    } else if (ext === 'docx' || ext === 'doc') {
+      extractedFileText = await extractDocx(file);
+    } else if (ext === 'txt') {
+      extractedFileText = await file.text();
+    } else {
+      throw new Error('فرمت فایل پشتیبانی نمیشه');
+    }
+
+    fileReading.classList.remove('visible');
+    fileChars.textContent = `✓ ${extractedFileText.length.toLocaleString()} کاراکتر خوانده شد`;
+    fileChars.classList.add('visible');
+  } catch (err) {
+    fileReading.classList.remove('visible');
+    fileChars.textContent = '❌ خطا در خواندن فایل: ' + err.message;
+    fileChars.classList.add('visible');
+    extractedFileText = null;
+  }
+}
+
+async function extractPDF(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items.map(item => item.str).join(' ');
+    fullText += pageText + '\n';
+  }
+  return fullText.trim();
+}
+
+async function extractDocx(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer });
+  return result.value.trim();
+}
+
+function removeFile() {
+  extractedFileText = null;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('uploadArea').classList.remove('has-file');
+  document.getElementById('fileInfo').classList.remove('visible');
+  document.getElementById('fileReading').classList.remove('visible');
+  document.getElementById('fileChars').classList.remove('visible');
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/(1024*1024)).toFixed(1) + ' MB';
+}
+
+// Drag & Drop
+const uploadArea = document.getElementById('uploadArea');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragging'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragging'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragging');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+// ===== Toggle Search =====
+function toggleSearch(event) {
+  const checkbox = document.getElementById("searchToggle");
+  if (!event.target.closest('label')) {
+    checkbox.checked = !checkbox.checked;
+  }
+  updateToggleUI();
+}
+
+function updateToggleUI() {
   const checkbox = document.getElementById("searchToggle");
   const row = document.getElementById("toggleRow");
   const cost = document.getElementById("toggleCost");
-  // اگه از row کلیک شد toggle کن
-  if (event.target === row || event.target.closest('.toggle-info')) {
-    checkbox.checked = !checkbox.checked;
-  }
   if (checkbox.checked) {
     row.classList.add("active");
     cost.textContent = "✓ فعال — هزینه اضافی ~$0.035";
@@ -273,6 +406,7 @@ function toggleSearch() {
   }
 }
 
+// ===== WAV Converter =====
 function pcmToWav(pcmData, sampleRate=24000, numChannels=1, bitDepth=16) {
   const dataLength = pcmData.length;
   const buffer = new ArrayBuffer(44 + dataLength);
@@ -289,6 +423,19 @@ function pcmToWav(pcmData, sampleRate=24000, numChannels=1, bitDepth=16) {
 }
 
 function toFa(n) { return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]); }
+
+// ===== Main Generate =====
+const btn = document.getElementById("generateBtn");
+const spinner = document.getElementById("spinner");
+const btnText = document.getElementById("btnText");
+const errorMsg = document.getElementById("errorMsg");
+const progressCard = document.getElementById("progressCard");
+const progressBar = document.getElementById("progressBar");
+const progressCount = document.getElementById("progressCount");
+const progressStatus = document.getElementById("progressStatus");
+const resultCard = document.getElementById("resultCard");
+const audioPlayer = document.getElementById("audioPlayer");
+const downloadBtn = document.getElementById("downloadBtn");
 
 btn.addEventListener("click", async () => {
   const topic = document.getElementById("topicInput").value.trim();
@@ -307,16 +454,26 @@ btn.addEventListener("click", async () => {
   resultCard.classList.remove("visible");
   progressCard.classList.add("visible");
   progressBar.style.width = "0%";
-  progressStatus.textContent = useSearch
-    ? "در حال جستجو در اینترنت و تولید متن با Gemini 2.5 Pro..."
-    : "در حال تولید متن با Gemini 2.5 Pro...";
   progressCount.textContent = "";
+
+  let statusMsg = "در حال تولید متن با Gemini 2.5 Pro...";
+  if (extractedFileText) statusMsg = "در حال خواندن فایل و تولید متن...";
+  if (useSearch) statusMsg = "در حال جستجو در اینترنت و تولید متن...";
+  if (extractedFileText && useSearch) statusMsg = "در حال خواندن فایل، جستجو در اینترنت و تولید متن...";
+  progressStatus.textContent = statusMsg;
 
   try {
     const scriptRes = await fetch(`${WORKER_URL}/script`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic, instructions, duration, speakerCount, useSearch }),
+      body: JSON.stringify({
+        topic,
+        instructions,
+        duration,
+        speakerCount,
+        useSearch,
+        fileContent: extractedFileText || null,
+      }),
     });
     const scriptData = await scriptRes.json();
     if (scriptData.error) throw new Error(scriptData.error);
