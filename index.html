@@ -19,7 +19,7 @@
     font-weight: 300; color: var(--text); min-height: 100vh;
     display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
   }
-  .container { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 1.25rem; }
+  .container { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 1.25rem; }
   header { text-align: center; padding-bottom: 0.5rem; }
   .logo-tag {
     display: inline-block; font-size: 0.7rem; font-weight: 700;
@@ -32,13 +32,14 @@
   .card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 1.75rem; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 1.1rem;
   }
   label {
     display: block; font-size: 0.72rem; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
   }
   textarea {
-    width: 100%; min-height: 110px; padding: 1rem 1.25rem;
+    width: 100%; padding: 1rem 1.25rem;
     border: 1.5px solid var(--border); border-radius: 12px;
     font-family: 'Vazirmatn', sans-serif; font-size: 1rem; font-weight: 300;
     color: var(--text); background: var(--bg); resize: vertical; outline: none;
@@ -46,7 +47,14 @@
   }
   textarea:focus { border-color: var(--accent); background: #fff; }
   textarea::placeholder { color: #C0BEB8; }
-  .row { display: flex; gap: 1rem; margin-top: 1.1rem; flex-wrap: wrap; }
+  #topicInput { min-height: 80px; }
+  #instructionsInput { min-height: 75px; }
+  .divider {
+    display: flex; align-items: center; gap: 0.75rem;
+    color: var(--muted); font-size: 0.75rem; font-weight: 500;
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .row { display: flex; gap: 1rem; flex-wrap: wrap; }
   .field { flex: 1; min-width: 130px; }
   select {
     width: 100%; padding: 0.7rem 1rem; border: 1.5px solid var(--border);
@@ -57,8 +65,43 @@
     background-repeat: no-repeat; background-position: left 1rem center; padding-left: 2.5rem;
   }
   select:focus { border-color: var(--accent); }
+
+  /* Toggle Switch */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 0.85rem 1rem;
+    cursor: pointer; transition: border-color 0.2s;
+  }
+  .toggle-row:hover { border-color: var(--accent); }
+  .toggle-row.active { border-color: var(--accent); background: var(--accent-light); }
+  .toggle-info { display: flex; align-items: center; gap: 0.6rem; }
+  .toggle-icon { font-size: 1.1rem; }
+  .toggle-text { display: flex; flex-direction: column; gap: 2px; }
+  .toggle-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+  .toggle-desc { font-size: 0.75rem; color: var(--muted); }
+  .toggle-cost { font-size: 0.72rem; color: #B45309; font-weight: 500; }
+  .toggle-row.active .toggle-cost { color: var(--accent); }
+  .switch {
+    position: relative; width: 44px; height: 24px; flex-shrink: 0;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0; background: #D1D5DB;
+    border-radius: 40px; transition: background 0.25s;
+    cursor: pointer;
+  }
+  .slider::before {
+    content: ''; position: absolute;
+    width: 18px; height: 18px; background: white;
+    border-radius: 50%; top: 3px; right: 3px;
+    transition: transform 0.25s; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider { background: var(--accent); }
+  input:checked + .slider::before { transform: translateX(-20px); }
+
   .btn {
-    width: 100%; margin-top: 1.25rem; padding: 0.95rem;
+    width: 100%; padding: 0.95rem;
     background: var(--accent); color: #fff; border: none; border-radius: 14px;
     font-family: 'Vazirmatn', sans-serif; font-size: 1rem; font-weight: 600;
     cursor: pointer; transition: background 0.2s, transform 0.1s;
@@ -111,6 +154,7 @@
 </head>
 <body>
 <div class="container">
+
   <header>
     <div class="logo-tag">DNR Studio</div>
     <h1>پادکست با <span>هوش مصنوعی</span></h1>
@@ -118,8 +162,35 @@
   </header>
 
   <div class="card">
-    <label for="topicInput">موضوع پادکست</label>
-    <textarea id="topicInput" placeholder="مثلاً: آینده هوش مصنوعی در ایران، یا تأثیر شبکه‌های اجتماعی بر جوانان..."></textarea>
+
+    <div>
+      <label for="topicInput">موضوع پادکست</label>
+      <textarea id="topicInput" placeholder="مثلاً: فشار خون، آینده هوش مصنوعی، تأثیر شبکه‌های اجتماعی..."></textarea>
+    </div>
+
+    <div class="divider">دستورالعمل اضافی (اختیاری)</div>
+
+    <div>
+      <label for="instructionsInput">به Gemini بگو چطور پادکست بسازه</label>
+      <textarea id="instructionsInput" placeholder="مثلاً: لحن علمی باشه، از آمار استفاده کن، مثال‌های ایرانی بزن، برای عموم مردم ساده توضیح بده..."></textarea>
+    </div>
+
+    <!-- Toggle سرچ -->
+    <div class="toggle-row" id="toggleRow" onclick="toggleSearch()">
+      <div class="toggle-info">
+        <span class="toggle-icon">🔍</span>
+        <div class="toggle-text">
+          <span class="toggle-title">جستجو در اینترنت</span>
+          <span class="toggle-desc">Gemini اطلاعات به‌روز جستجو می‌کند</span>
+          <span class="toggle-cost" id="toggleCost">هزینه اضافی: ~$0.035 در هر بار</span>
+        </div>
+      </div>
+      <label class="switch" onclick="event.stopPropagation()">
+        <input type="checkbox" id="searchToggle" onchange="toggleSearch()">
+        <span class="slider"></span>
+      </label>
+    </div>
+
     <div class="row">
       <div class="field">
         <label for="speakerCount">تعداد گوینده</label>
@@ -140,10 +211,12 @@
         </select>
       </div>
     </div>
+
     <button class="btn" id="generateBtn">
       <div class="spinner" id="spinner"></div>
       <span id="btnText">✨ ساخت پادکست</span>
     </button>
+
   </div>
 
   <div class="error" id="errorMsg"></div>
@@ -156,7 +229,7 @@
     <div class="progress-bar-wrap">
       <div class="progress-bar" id="progressBar"></div>
     </div>
-    <div class="progress-status" id="progressStatus">در حال تولید متن گفتگو...</div>
+    <div class="progress-status" id="progressStatus">در حال تولید متن...</div>
   </div>
 
   <div class="result-card" id="resultCard">
@@ -183,11 +256,28 @@ const resultCard = document.getElementById("resultCard");
 const audioPlayer = document.getElementById("audioPlayer");
 const downloadBtn = document.getElementById("downloadBtn");
 
+function toggleSearch() {
+  const checkbox = document.getElementById("searchToggle");
+  const row = document.getElementById("toggleRow");
+  const cost = document.getElementById("toggleCost");
+  // اگه از row کلیک شد toggle کن
+  if (event.target === row || event.target.closest('.toggle-info')) {
+    checkbox.checked = !checkbox.checked;
+  }
+  if (checkbox.checked) {
+    row.classList.add("active");
+    cost.textContent = "✓ فعال — هزینه اضافی ~$0.035";
+  } else {
+    row.classList.remove("active");
+    cost.textContent = "هزینه اضافی: ~$0.035 در هر بار";
+  }
+}
+
 function pcmToWav(pcmData, sampleRate=24000, numChannels=1, bitDepth=16) {
   const dataLength = pcmData.length;
   const buffer = new ArrayBuffer(44 + dataLength);
   const view = new DataView(buffer);
-  const writeStr = (o, s) => { for (let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
+  const writeStr = (o,s) => { for(let i=0;i<s.length;i++) view.setUint8(o+i,s.charCodeAt(i)); };
   writeStr(0,'RIFF'); view.setUint32(4,36+dataLength,true); writeStr(8,'WAVE');
   writeStr(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true);
   view.setUint16(22,numChannels,true); view.setUint32(24,sampleRate,true);
@@ -195,13 +285,16 @@ function pcmToWav(pcmData, sampleRate=24000, numChannels=1, bitDepth=16) {
   view.setUint16(32,numChannels*bitDepth/8,true); view.setUint16(34,bitDepth,true);
   writeStr(36,'data'); view.setUint32(40,dataLength,true);
   new Uint8Array(buffer,44).set(pcmData);
-  return new Blob([buffer], {type:'audio/wav'});
+  return new Blob([buffer],{type:'audio/wav'});
 }
 
-function toFa(n) { return String(n).replace(/\d/g, d=>'۰۱۲۳۴۵۶۷۸۹'[d]); }
+function toFa(n) { return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]); }
 
 btn.addEventListener("click", async () => {
   const topic = document.getElementById("topicInput").value.trim();
+  const instructions = document.getElementById("instructionsInput").value.trim();
+  const useSearch = document.getElementById("searchToggle").checked;
+
   if (!topic) { showError("لطفاً موضوع پادکست را وارد کنید."); return; }
 
   const speakerCount = parseInt(document.getElementById("speakerCount").value);
@@ -214,15 +307,16 @@ btn.addEventListener("click", async () => {
   resultCard.classList.remove("visible");
   progressCard.classList.add("visible");
   progressBar.style.width = "0%";
-  progressStatus.textContent = "در حال تولید متن گفتگو با Gemini 2.5 Pro...";
+  progressStatus.textContent = useSearch
+    ? "در حال جستجو در اینترنت و تولید متن با Gemini 2.5 Pro..."
+    : "در حال تولید متن با Gemini 2.5 Pro...";
   progressCount.textContent = "";
 
   try {
-    // مرحله ۱: گرفتن متن
     const scriptRes = await fetch(`${WORKER_URL}/script`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic, duration, speakerCount }),
+      body: JSON.stringify({ topic, instructions, duration, speakerCount, useSearch }),
     });
     const scriptData = await scriptRes.json();
     if (scriptData.error) throw new Error(scriptData.error);
@@ -230,7 +324,6 @@ btn.addEventListener("click", async () => {
     const lines = scriptData.lines;
     if (!lines || lines.length === 0) throw new Error("متنی تولید نشد");
 
-    // مرحله ۲: TTS هر خط
     const pcmChunks = [];
     const total = lines.length;
 
@@ -247,11 +340,11 @@ btn.addEventListener("click", async () => {
         body: JSON.stringify({ text, voice }),
       });
       const ttsData = await ttsRes.json();
-      if (ttsData.error) { console.warn(`خط ${i+1} خطا:`, ttsData.error); continue; }
+      if (ttsData.error) { console.warn(`خط ${i+1}:`, ttsData.error); continue; }
 
       const binary = atob(ttsData.audio);
       const bytes = new Uint8Array(binary.length);
-      for (let j=0; j<binary.length; j++) bytes[j] = binary.charCodeAt(j);
+      for (let j=0;j<binary.length;j++) bytes[j] = binary.charCodeAt(j);
       pcmChunks.push(bytes);
     }
 
@@ -260,10 +353,10 @@ btn.addEventListener("click", async () => {
     progressStatus.textContent = "در حال ترکیب فایل‌های صوتی...";
     progressBar.style.width = "100%";
 
-    const totalLen = pcmChunks.reduce((s,c) => s+c.length, 0);
+    const totalLen = pcmChunks.reduce((s,c)=>s+c.length,0);
     const combined = new Uint8Array(totalLen);
     let offset = 0;
-    for (const chunk of pcmChunks) { combined.set(chunk, offset); offset += chunk.length; }
+    for (const chunk of pcmChunks) { combined.set(chunk,offset); offset+=chunk.length; }
 
     const blob = pcmToWav(combined);
     const url = URL.createObjectURL(blob);
