@@ -21,12 +21,12 @@
     font-weight: 300; color: var(--text); min-height: 100vh;
     display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
   }
-  .container { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 1.25rem; }
+  .container { width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 1.25rem; }
   header { text-align: center; padding-bottom: 0.5rem; }
   .logo-tag {
-    display: inline-block; font-size: 0.7rem; font-weight: 700;
-    letter-spacing: 0.2em; color: var(--accent); background: var(--accent-light);
-    padding: 4px 14px; border-radius: 40px; margin-bottom: 0.75rem; text-transform: uppercase;
+    display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+    color: var(--accent); background: var(--accent-light); padding: 4px 14px;
+    border-radius: 40px; margin-bottom: 0.75rem; text-transform: uppercase;
   }
   h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); font-weight: 700; letter-spacing: -0.03em; }
   h1 span { color: var(--accent); }
@@ -34,64 +34,70 @@
   .card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 1.75rem; box-shadow: var(--shadow);
-    display: flex; flex-direction: column; gap: 1.1rem;
+    display: flex; flex-direction: column; gap: 1.2rem;
   }
-  label {
-    display: block; font-size: 0.72rem; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
+  .field-label {
+    display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
   }
-  textarea {
-    width: 100%; padding: 1rem 1.25rem;
-    border: 1.5px solid var(--border); border-radius: 12px;
-    font-family: 'Vazirmatn', sans-serif; font-size: 1rem; font-weight: 300;
-    color: var(--text); background: var(--bg); resize: vertical; outline: none;
-    transition: border-color 0.2s, background 0.2s; line-height: 1.8;
+  input[type="text"], textarea {
+    width: 100%; padding: 0.85rem 1.1rem; border: 1.5px solid var(--border);
+    border-radius: 12px; font-family: 'Vazirmatn', sans-serif; font-size: 0.95rem;
+    font-weight: 300; color: var(--text); background: var(--bg); outline: none;
+    transition: border-color 0.2s, background 0.2s; line-height: 1.7;
   }
-  textarea:focus { border-color: var(--accent); background: #fff; }
-  textarea::placeholder { color: #C0BEB8; }
-  #topicInput { min-height: 80px; }
-  #instructionsInput { min-height: 70px; }
+  input[type="text"]:focus, textarea:focus { border-color: var(--accent); background: #fff; }
+  input[type="text"]::placeholder, textarea::placeholder { color: #C0BEB8; }
+  textarea { resize: vertical; min-height: 75px; }
   .divider {
     display: flex; align-items: center; gap: 0.75rem;
     color: var(--muted); font-size: 0.75rem; font-weight: 500;
   }
   .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-  /* File Upload */
+  .content-types-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .type-chip {
+    padding: 0.45rem 0.9rem; border: 1.5px solid var(--border);
+    border-radius: 40px; font-size: 0.82rem; font-weight: 500;
+    color: var(--muted); cursor: pointer; transition: all 0.18s;
+    user-select: none; background: var(--bg);
+  }
+  .type-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .type-chip.selected { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .characters-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .char-field { flex: 1; min-width: 200px; }
+  .char-label-row { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem; }
+  .char-icon { font-size: 1rem; }
+  .char-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
   .file-upload-area {
-    border: 2px dashed var(--border); border-radius: 12px;
-    padding: 1.25rem; text-align: center; cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    position: relative;
+    border: 2px dashed var(--border); border-radius: 12px; padding: 1.1rem;
+    text-align: center; cursor: pointer; transition: all 0.2s; position: relative;
   }
-  .file-upload-area:hover { border-color: var(--accent); background: var(--accent-light); }
+  .file-upload-area:hover, .file-upload-area.dragging { border-color: var(--accent); background: var(--accent-light); }
   .file-upload-area.has-file { border-color: var(--accent); background: var(--accent-light); border-style: solid; }
-  .file-upload-area.dragging { border-color: var(--accent); background: var(--accent-light); }
-  .file-upload-area input[type="file"] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-  }
-  .file-upload-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
-  .file-upload-text { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
-  .file-upload-text strong { color: var(--accent); font-weight: 600; }
-  .file-upload-hint { font-size: 0.72rem; color: #B0AEA8; margin-top: 0.25rem; }
-  .file-info {
-    display: none; align-items: center; gap: 0.6rem;
-    background: var(--surface); border-radius: 8px; padding: 0.6rem 0.9rem;
-    margin-top: 0.75rem; border: 1px solid #C2DDD1;
-  }
+  .file-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .file-upload-text { font-size: 0.875rem; color: var(--muted); }
+  .file-info { display: none; align-items: center; gap: 0.6rem; margin-top: 0.6rem; background: var(--surface); border-radius: 8px; padding: 0.55rem 0.9rem; border: 1px solid #C2DDD1; }
   .file-info.visible { display: flex; }
-  .file-info-name { font-size: 0.85rem; font-weight: 500; color: var(--text); flex: 1; text-align: right; }
+  .file-info-name { font-size: 0.85rem; font-weight: 500; color: var(--text); flex: 1; }
   .file-info-size { font-size: 0.75rem; color: var(--muted); }
-  .file-remove {
-    background: none; border: none; cursor: pointer; color: #B0AEA8;
-    font-size: 1rem; padding: 0 0.25rem; transition: color 0.2s; line-height: 1;
-  }
+  .file-remove { background: none; border: none; cursor: pointer; color: #B0AEA8; font-size: 1rem; transition: color 0.2s; }
   .file-remove:hover { color: #991B1B; }
-  .file-reading { font-size: 0.8rem; color: var(--accent); margin-top: 0.5rem; display: none; }
-  .file-reading.visible { display: block; }
-  .file-chars { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; display: none; }
-  .file-chars.visible { display: block; }
-
+  .file-status { font-size: 0.75rem; color: var(--accent); margin-top: 0.35rem; display: none; }
+  .file-status.visible { display: block; }
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 0.85rem 1rem; cursor: pointer; transition: all 0.2s;
+  }
+  .toggle-row:hover { border-color: var(--accent); }
+  .toggle-row.active { border-color: var(--accent); background: var(--accent-light); }
+  .toggle-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+  .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; inset: 0; background: #D1D5DB; border-radius: 40px; transition: background 0.25s; cursor: pointer; }
+  .slider::before { content: ''; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 3px; right: 3px; transition: transform 0.25s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+  input:checked + .slider { background: var(--accent); }
+  input:checked + .slider::before { transform: translateX(-20px); }
   .row { display: flex; gap: 1rem; flex-wrap: wrap; }
   .field { flex: 1; min-width: 130px; }
   select {
@@ -103,56 +109,18 @@
     background-repeat: no-repeat; background-position: left 1rem center; padding-left: 2.5rem;
   }
   select:focus { border-color: var(--accent); }
-
-  .toggle-row {
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--bg); border: 1.5px solid var(--border);
-    border-radius: 12px; padding: 0.85rem 1rem; cursor: pointer; transition: border-color 0.2s;
-  }
-  .toggle-row:hover { border-color: var(--accent); }
-  .toggle-row.active { border-color: var(--accent); background: var(--accent-light); }
-  .toggle-info { display: flex; align-items: center; gap: 0.6rem; }
-  .toggle-text { display: flex; flex-direction: column; gap: 2px; }
-  .toggle-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
-  .toggle-desc { font-size: 0.75rem; color: var(--muted); }
-  .toggle-cost { font-size: 0.72rem; color: #B45309; font-weight: 500; }
-  .toggle-row.active .toggle-cost { color: var(--accent); }
-  .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .slider {
-    position: absolute; inset: 0; background: #D1D5DB;
-    border-radius: 40px; transition: background 0.25s; cursor: pointer;
-  }
-  .slider::before {
-    content: ''; position: absolute; width: 18px; height: 18px; background: white;
-    border-radius: 50%; top: 3px; right: 3px; transition: transform 0.25s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  }
-  input:checked + .slider { background: var(--accent); }
-  input:checked + .slider::before { transform: translateX(-20px); }
-
   .btn {
-    width: 100%; padding: 0.95rem; background: var(--accent); color: #fff;
-    border: none; border-radius: 14px; font-family: 'Vazirmatn', sans-serif;
-    font-size: 1rem; font-weight: 600; cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    width: 100%; padding: 0.95rem; background: var(--accent); color: #fff; border: none;
+    border-radius: 14px; font-family: 'Vazirmatn', sans-serif; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s, transform 0.1s;
     display: flex; align-items: center; justify-content: center; gap: 0.6rem;
   }
   .btn:hover:not(:disabled) { background: var(--accent-hover); }
   .btn:active:not(:disabled) { transform: scale(0.98); }
   .btn:disabled { background: #A8C4B8; cursor: not-allowed; }
-  .spinner {
-    width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff; border-radius: 50%;
-    animation: spin 0.7s linear infinite; display: none; flex-shrink: 0;
-  }
+  .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; flex-shrink: 0; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  .progress-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 1.5rem 1.75rem;
-    display: none; flex-direction: column; gap: 1rem; box-shadow: var(--shadow);
-  }
+  .progress-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 1.75rem; display: none; flex-direction: column; gap: 1rem; box-shadow: var(--shadow); }
   .progress-card.visible { display: flex; }
   .progress-header { display: flex; justify-content: space-between; align-items: center; }
   .progress-title { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
@@ -160,34 +128,19 @@
   .progress-bar-wrap { background: var(--border); border-radius: 40px; height: 6px; overflow: hidden; }
   .progress-bar { height: 100%; background: var(--accent); border-radius: 40px; transition: width 0.4s ease; width: 0%; }
   .progress-status { font-size: 0.85rem; color: var(--muted); min-height: 1.2em; }
-
-  .result-card {
-    background: var(--accent-light); border: 1.5px solid #C2DDD1;
-    border-radius: var(--radius); padding: 1.5rem 1.75rem;
-    display: none; flex-direction: column; gap: 1rem; box-shadow: var(--shadow);
-  }
+  .result-card { background: var(--accent-light); border: 1.5px solid #C2DDD1; border-radius: var(--radius); padding: 1.5rem 1.75rem; display: none; flex-direction: column; gap: 1rem; box-shadow: var(--shadow); }
   .result-card.visible { display: flex; }
   .result-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
   audio { width: 100%; border-radius: 10px; outline: none; }
-  .download-btn {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    padding: 0.65rem 1.25rem; background: #fff; border: 1.5px solid #C2DDD1;
-    border-radius: 40px; font-family: 'Vazirmatn', sans-serif;
-    font-size: 0.875rem; font-weight: 600; color: var(--accent);
-    text-decoration: none; cursor: pointer; transition: background 0.2s; align-self: flex-start;
-  }
+  .download-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.25rem; background: #fff; border: 1.5px solid #C2DDD1; border-radius: 40px; font-family: 'Vazirmatn', sans-serif; font-size: 0.875rem; font-weight: 600; color: var(--accent); text-decoration: none; cursor: pointer; transition: background 0.2s; align-self: flex-start; }
   .download-btn:hover { background: #D4EDE3; }
-  .error {
-    background: #FEF2F2; border: 1.5px solid #FECACA; border-radius: 12px;
-    padding: 1rem 1.25rem; color: #991B1B; font-size: 0.9rem; display: none;
-  }
+  .error { background: #FEF2F2; border: 1.5px solid #FECACA; border-radius: 12px; padding: 1rem 1.25rem; color: #991B1B; font-size: 0.9rem; display: none; }
   .error.visible { display: block; }
   footer { text-align: center; font-size: 0.72rem; color: var(--muted); }
 </style>
 </head>
 <body>
 <div class="container">
-
   <header>
     <div class="logo-tag">DNR Studio</div>
     <h1>پادکست با <span>هوش مصنوعی</span></h1>
@@ -197,45 +150,66 @@
   <div class="card">
 
     <div>
-      <label for="topicInput">موضوع پادکست</label>
-      <textarea id="topicInput" placeholder="مثلاً: فشار خون، آینده هوش مصنوعی، تأثیر شبکه‌های اجتماعی..."></textarea>
+      <label class="field-label" for="topicInput">موضوع</label>
+      <textarea id="topicInput" placeholder="موضوع پادکست..."></textarea>
+    </div>
+
+    <div>
+      <label class="field-label" for="promptInput">Prompt</label>
+      <textarea id="promptInput" placeholder="دستورالعمل اضافی..."></textarea>
+    </div>
+
+    <div class="divider">نوع محتوا (اختیاری)</div>
+
+    <div class="content-types-grid">
+      <div class="type-chip" onclick="toggleChip(this)">🎙️ پادکست</div>
+      <div class="type-chip" onclick="toggleChip(this)">📊 تحلیلی</div>
+      <div class="type-chip" onclick="toggleChip(this)">🎬 موشن گرافیک</div>
+      <div class="type-chip" onclick="toggleChip(this)">🎨 انیمیشن</div>
+      <div class="type-chip" onclick="toggleChip(this)">📰 خبری</div>
+      <div class="type-chip" onclick="toggleChip(this)">🎭 داستانی</div>
+      <div class="type-chip" onclick="toggleChip(this)">🎓 آموزشی</div>
+      <div class="type-chip" onclick="toggleChip(this)">😄 طنز</div>
+      <div class="type-chip" onclick="toggleChip(this)">🔬 علمی</div>
+      <div class="type-chip" onclick="toggleChip(this)">💼 تجاری</div>
+    </div>
+
+    <div class="divider">شخصیت‌ها (اختیاری)</div>
+
+    <div class="characters-row">
+      <div class="char-field">
+        <div class="char-label-row">
+          <span class="char-icon">👩</span>
+          <span class="char-label">شخصیت‌های زن</span>
+        </div>
+        <input type="text" id="femaleChars" placeholder="اسامی زنان...">
+      </div>
+      <div class="char-field">
+        <div class="char-label-row">
+          <span class="char-icon">👨</span>
+          <span class="char-label">شخصیت‌های مرد</span>
+        </div>
+        <input type="text" id="maleChars" placeholder="اسامی مردان...">
+      </div>
     </div>
 
     <div class="divider">فایل منبع (اختیاری)</div>
 
     <div>
-      <label>آپلود فایل — PDF، Word یا متن</label>
       <div class="file-upload-area" id="uploadArea">
         <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" onchange="handleFile(this.files[0])">
-        <div class="file-upload-icon">📎</div>
-        <div class="file-upload-text"><strong>کلیک کنید</strong> یا فایل را اینجا بکشید</div>
-        <div class="file-upload-hint">PDF، Word (.docx)، یا متن (.txt) — Gemini کل متن را می‌خواند</div>
+        <div class="file-upload-text">📎 فایل خود را آپلود کنید</div>
       </div>
       <div class="file-info" id="fileInfo">
         <span class="file-info-name" id="fileName"></span>
         <span class="file-info-size" id="fileSize"></span>
-        <button class="file-remove" onclick="removeFile()" title="حذف فایل">✕</button>
+        <button class="file-remove" onclick="removeFile()">✕</button>
       </div>
-      <div class="file-reading" id="fileReading">⏳ در حال خواندن فایل...</div>
-      <div class="file-chars" id="fileChars"></div>
-    </div>
-
-    <div class="divider">دستورالعمل اضافی (اختیاری)</div>
-
-    <div>
-      <label for="instructionsInput">به Gemini بگو چطور پادکست بسازه</label>
-      <textarea id="instructionsInput" placeholder="مثلاً: لحن علمی باشه، از آمار استفاده کن، برای عموم مردم ساده توضیح بده..."></textarea>
+      <div class="file-status" id="fileStatus"></div>
     </div>
 
     <div class="toggle-row" id="toggleRow" onclick="toggleSearch(event)">
-      <div class="toggle-info">
-        <span style="font-size:1.1rem">🔍</span>
-        <div class="toggle-text">
-          <span class="toggle-title">جستجو در اینترنت</span>
-          <span class="toggle-desc">Gemini اطلاعات به‌روز جستجو می‌کند</span>
-          <span class="toggle-cost" id="toggleCost">هزینه اضافی: ~$0.035 در هر بار</span>
-        </div>
-      </div>
+      <span class="toggle-title">🔍 جستجو در اینترنت</span>
       <label class="switch" onclick="event.stopPropagation()">
         <input type="checkbox" id="searchToggle" onchange="updateToggleUI()">
         <span class="slider"></span>
@@ -244,7 +218,7 @@
 
     <div class="row">
       <div class="field">
-        <label for="speakerCount">تعداد گوینده</label>
+        <label class="field-label" for="speakerCount">تعداد گوینده</label>
         <select id="speakerCount">
           <option value="1">۱ نفر</option>
           <option value="2" selected>۲ نفر</option>
@@ -253,7 +227,7 @@
         </select>
       </div>
       <div class="field">
-        <label for="durationSelect">مدت زمان</label>
+        <label class="field-label" for="durationSelect">مدت زمان</label>
         <select id="durationSelect">
           <option value="1">~۱ دقیقه</option>
           <option value="2" selected>~۲ دقیقه</option>
@@ -294,252 +268,184 @@
 
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
 const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
 let extractedFileText = null;
 
-// ===== File Handling =====
+function toggleChip(el) { el.classList.toggle('selected'); }
+function getSelectedTypes() {
+  return [...document.querySelectorAll('.type-chip.selected')]
+    .map(el => el.textContent.replace(/^\S+\s/, '').trim());
+}
+
+// جدا کردن اسامی با هر جداکننده‌ای
+function parseNames(str) {
+  return str.split(/[\s,،،]+/).map(s => s.trim()).filter(Boolean);
+}
+
 async function handleFile(file) {
   if (!file) return;
-  const uploadArea = document.getElementById('uploadArea');
-  const fileInfo = document.getElementById('fileInfo');
-  const fileName = document.getElementById('fileName');
-  const fileSize = document.getElementById('fileSize');
-  const fileReading = document.getElementById('fileReading');
-  const fileChars = document.getElementById('fileChars');
-
-  uploadArea.classList.add('has-file');
-  fileInfo.classList.add('visible');
-  fileName.textContent = file.name;
-  fileSize.textContent = formatSize(file.size);
-  fileReading.classList.add('visible');
-  fileChars.classList.remove('visible');
+  document.getElementById('uploadArea').classList.add('has-file');
+  document.getElementById('fileInfo').classList.add('visible');
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = formatSize(file.size);
+  const status = document.getElementById('fileStatus');
+  status.textContent = '⏳ در حال خواندن...';
+  status.classList.add('visible');
   extractedFileText = null;
-
   try {
     const ext = file.name.split('.').pop().toLowerCase();
-
-    if (ext === 'pdf') {
-      extractedFileText = await extractPDF(file);
-    } else if (ext === 'docx' || ext === 'doc') {
-      extractedFileText = await extractDocx(file);
-    } else if (ext === 'txt') {
-      extractedFileText = await file.text();
-    } else {
-      throw new Error('فرمت فایل پشتیبانی نمیشه');
-    }
-
-    fileReading.classList.remove('visible');
-    fileChars.textContent = `✓ ${extractedFileText.length.toLocaleString()} کاراکتر خوانده شد`;
-    fileChars.classList.add('visible');
-  } catch (err) {
-    fileReading.classList.remove('visible');
-    fileChars.textContent = '❌ خطا در خواندن فایل: ' + err.message;
-    fileChars.classList.add('visible');
+    if (ext === 'pdf') extractedFileText = await extractPDF(file);
+    else if (ext === 'docx' || ext === 'doc') extractedFileText = await extractDocx(file);
+    else if (ext === 'txt') extractedFileText = await file.text();
+    else throw new Error('فرمت پشتیبانی نمیشه');
+    status.textContent = `✓ ${extractedFileText.length.toLocaleString()} کاراکتر`;
+  } catch(e) {
+    status.textContent = '❌ ' + e.message;
     extractedFileText = null;
   }
 }
-
 async function extractPDF(file) {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  let fullText = '';
+  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+  let text = '';
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    const pageText = content.items.map(item => item.str).join(' ');
-    fullText += pageText + '\n';
+    text += content.items.map(it => it.str).join(' ') + '\n';
   }
-  return fullText.trim();
+  return text.trim();
 }
-
 async function extractDocx(file) {
-  const arrayBuffer = await file.arrayBuffer();
-  const result = await mammoth.extractRawText({ arrayBuffer });
+  const result = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
   return result.value.trim();
 }
-
 function removeFile() {
   extractedFileText = null;
   document.getElementById('fileInput').value = '';
   document.getElementById('uploadArea').classList.remove('has-file');
   document.getElementById('fileInfo').classList.remove('visible');
-  document.getElementById('fileReading').classList.remove('visible');
-  document.getElementById('fileChars').classList.remove('visible');
+  const s = document.getElementById('fileStatus');
+  s.textContent = ''; s.classList.remove('visible');
 }
-
-function formatSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
-  return (bytes/(1024*1024)).toFixed(1) + ' MB';
+function formatSize(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
 }
+const ua = document.getElementById('uploadArea');
+ua.addEventListener('dragover', e => { e.preventDefault(); ua.classList.add('dragging'); });
+ua.addEventListener('dragleave', () => ua.classList.remove('dragging'));
+ua.addEventListener('drop', e => { e.preventDefault(); ua.classList.remove('dragging'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
 
-// Drag & Drop
-const uploadArea = document.getElementById('uploadArea');
-uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragging'); });
-uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragging'));
-uploadArea.addEventListener('drop', e => {
-  e.preventDefault();
-  uploadArea.classList.remove('dragging');
-  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-});
-
-// ===== Toggle Search =====
-function toggleSearch(event) {
-  const checkbox = document.getElementById("searchToggle");
-  if (!event.target.closest('label')) {
-    checkbox.checked = !checkbox.checked;
-  }
+function toggleSearch(e) {
+  const cb = document.getElementById('searchToggle');
+  if (!e.target.closest('label')) cb.checked = !cb.checked;
   updateToggleUI();
 }
-
 function updateToggleUI() {
-  const checkbox = document.getElementById("searchToggle");
-  const row = document.getElementById("toggleRow");
-  const cost = document.getElementById("toggleCost");
-  if (checkbox.checked) {
-    row.classList.add("active");
-    cost.textContent = "✓ فعال — هزینه اضافی ~$0.035";
-  } else {
-    row.classList.remove("active");
-    cost.textContent = "هزینه اضافی: ~$0.035 در هر بار";
-  }
+  const cb = document.getElementById('searchToggle');
+  document.getElementById('toggleRow').classList.toggle('active', cb.checked);
 }
 
-// ===== WAV Converter =====
-function pcmToWav(pcmData, sampleRate=24000, numChannels=1, bitDepth=16) {
-  const dataLength = pcmData.length;
-  const buffer = new ArrayBuffer(44 + dataLength);
-  const view = new DataView(buffer);
-  const writeStr = (o,s) => { for(let i=0;i<s.length;i++) view.setUint8(o+i,s.charCodeAt(i)); };
-  writeStr(0,'RIFF'); view.setUint32(4,36+dataLength,true); writeStr(8,'WAVE');
-  writeStr(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true);
-  view.setUint16(22,numChannels,true); view.setUint32(24,sampleRate,true);
-  view.setUint32(28,sampleRate*numChannels*bitDepth/8,true);
-  view.setUint16(32,numChannels*bitDepth/8,true); view.setUint16(34,bitDepth,true);
-  writeStr(36,'data'); view.setUint32(40,dataLength,true);
-  new Uint8Array(buffer,44).set(pcmData);
-  return new Blob([buffer],{type:'audio/wav'});
+function pcmToWav(pcm, sr=24000, ch=1, bd=16) {
+  const dl = pcm.length, buf = new ArrayBuffer(44+dl), v = new DataView(buf);
+  const ws = (o,s) => { for(let i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); };
+  ws(0,'RIFF'); v.setUint32(4,36+dl,true); ws(8,'WAVE'); ws(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,ch,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*ch*bd/8,true);
+  v.setUint16(32,ch*bd/8,true); v.setUint16(34,bd,true); ws(36,'data');
+  v.setUint32(40,dl,true); new Uint8Array(buf,44).set(pcm);
+  return new Blob([buf],{type:'audio/wav'});
 }
-
 function toFa(n) { return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]); }
 
-// ===== Main Generate =====
-const btn = document.getElementById("generateBtn");
-const spinner = document.getElementById("spinner");
-const btnText = document.getElementById("btnText");
-const errorMsg = document.getElementById("errorMsg");
-const progressCard = document.getElementById("progressCard");
-const progressBar = document.getElementById("progressBar");
-const progressCount = document.getElementById("progressCount");
-const progressStatus = document.getElementById("progressStatus");
-const resultCard = document.getElementById("resultCard");
-const audioPlayer = document.getElementById("audioPlayer");
-const downloadBtn = document.getElementById("downloadBtn");
+document.getElementById('generateBtn').addEventListener('click', async () => {
+  const topic = document.getElementById('topicInput').value.trim();
+  const instructions = document.getElementById('promptInput').value.trim();
+  const useSearch = document.getElementById('searchToggle').checked;
+  const contentTypes = getSelectedTypes();
+  const femaleCharacters = parseNames(document.getElementById('femaleChars').value);
+  const maleCharacters = parseNames(document.getElementById('maleChars').value);
+  const speakerCount = parseInt(document.getElementById('speakerCount').value);
+  const duration = parseInt(document.getElementById('durationSelect').value);
 
-btn.addEventListener("click", async () => {
-  const topic = document.getElementById("topicInput").value.trim();
-  const instructions = document.getElementById("instructionsInput").value.trim();
-  const useSearch = document.getElementById("searchToggle").checked;
+  if (!topic) { showError('لطفاً موضوع را وارد کنید.'); return; }
 
-  if (!topic) { showError("لطفاً موضوع پادکست را وارد کنید."); return; }
+  const btn = document.getElementById('generateBtn');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btnText');
+  const errorMsg = document.getElementById('errorMsg');
+  const progressCard = document.getElementById('progressCard');
+  const progressBar = document.getElementById('progressBar');
+  const progressCount = document.getElementById('progressCount');
+  const progressStatus = document.getElementById('progressStatus');
+  const resultCard = document.getElementById('resultCard');
 
-  const speakerCount = parseInt(document.getElementById("speakerCount").value);
-  const duration = parseInt(document.getElementById("durationSelect").value);
-
-  btn.disabled = true;
-  spinner.style.display = "block";
-  btnText.textContent = "در حال ساخت...";
-  errorMsg.classList.remove("visible");
-  resultCard.classList.remove("visible");
-  progressCard.classList.add("visible");
-  progressBar.style.width = "0%";
-  progressCount.textContent = "";
-
-  let statusMsg = "در حال تولید متن با Gemini 2.5 Pro...";
-  if (extractedFileText) statusMsg = "در حال خواندن فایل و تولید متن...";
-  if (useSearch) statusMsg = "در حال جستجو در اینترنت و تولید متن...";
-  if (extractedFileText && useSearch) statusMsg = "در حال خواندن فایل، جستجو در اینترنت و تولید متن...";
-  progressStatus.textContent = statusMsg;
+  btn.disabled = true; spinner.style.display = 'block'; btnText.textContent = 'در حال ساخت...';
+  errorMsg.classList.remove('visible'); resultCard.classList.remove('visible');
+  progressCard.classList.add('visible'); progressBar.style.width = '0%'; progressCount.textContent = '';
+  progressStatus.textContent = 'در حال تولید متن...';
 
   try {
     const scriptRes = await fetch(`${WORKER_URL}/script`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        topic,
-        instructions,
-        duration,
-        speakerCount,
-        useSearch,
-        fileContent: extractedFileText || null,
-      }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, instructions, duration, speakerCount, useSearch, fileContent: extractedFileText, femaleCharacters, maleCharacters, contentTypes }),
     });
     const scriptData = await scriptRes.json();
     if (scriptData.error) throw new Error(scriptData.error);
-
     const lines = scriptData.lines;
-    if (!lines || lines.length === 0) throw new Error("متنی تولید نشد");
+    if (!lines || lines.length === 0) throw new Error('متنی تولید نشد');
 
     const pcmChunks = [];
     const total = lines.length;
-
     for (let i = 0; i < total; i++) {
       const { text, voice, speaker } = lines[i];
-      const preview = text.length > 35 ? text.substring(0,35)+"..." : text;
-      progressStatus.textContent = `گوینده ${speaker}: ${preview}`;
+      const preview = text.length > 35 ? text.substring(0,35)+'...' : text;
+      progressStatus.textContent = `${speaker}: ${preview}`;
       progressCount.textContent = `${toFa(i+1)} / ${toFa(total)}`;
       progressBar.style.width = `${Math.round((i/total)*100)}%`;
-
       const ttsRes = await fetch(`${WORKER_URL}/tts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, voice }),
       });
       const ttsData = await ttsRes.json();
-      if (ttsData.error) { console.warn(`خط ${i+1}:`, ttsData.error); continue; }
-
-      const binary = atob(ttsData.audio);
-      const bytes = new Uint8Array(binary.length);
-      for (let j=0;j<binary.length;j++) bytes[j] = binary.charCodeAt(j);
+      if (ttsData.error) { console.warn(ttsData.error); continue; }
+      const bin = atob(ttsData.audio);
+      const bytes = new Uint8Array(bin.length);
+      for (let j=0;j<bin.length;j++) bytes[j] = bin.charCodeAt(j);
       pcmChunks.push(bytes);
     }
 
-    if (pcmChunks.length === 0) throw new Error("هیچ صدایی تولید نشد");
-
-    progressStatus.textContent = "در حال ترکیب فایل‌های صوتی...";
-    progressBar.style.width = "100%";
+    if (pcmChunks.length === 0) throw new Error('هیچ صدایی تولید نشد');
+    progressStatus.textContent = 'در حال ترکیب...';
+    progressBar.style.width = '100%';
 
     const totalLen = pcmChunks.reduce((s,c)=>s+c.length,0);
     const combined = new Uint8Array(totalLen);
     let offset = 0;
-    for (const chunk of pcmChunks) { combined.set(chunk,offset); offset+=chunk.length; }
+    for (const c of pcmChunks) { combined.set(c,offset); offset+=c.length; }
 
     const blob = pcmToWav(combined);
     const url = URL.createObjectURL(blob);
-    audioPlayer.src = url;
-    downloadBtn.href = url;
-    progressCard.classList.remove("visible");
-    resultCard.classList.add("visible");
+    document.getElementById('audioPlayer').src = url;
+    document.getElementById('downloadBtn').href = url;
+    progressCard.classList.remove('visible');
+    resultCard.classList.add('visible');
 
   } catch(err) {
-    showError("❌ " + err.message);
-    progressCard.classList.remove("visible");
+    showError('❌ ' + err.message);
+    progressCard.classList.remove('visible');
   } finally {
-    btn.disabled = false;
-    spinner.style.display = "none";
-    btnText.textContent = "✨ ساخت پادکست";
+    document.getElementById('generateBtn').disabled = false;
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('btnText').textContent = '✨ ساخت پادکست';
   }
 });
 
 function showError(msg) {
-  errorMsg.textContent = msg;
-  errorMsg.classList.add("visible");
+  const e = document.getElementById('errorMsg');
+  e.textContent = msg; e.classList.add('visible');
 }
-
-document.getElementById("topicInput").addEventListener("keydown", e => {
-  if (e.ctrlKey && e.key === "Enter") btn.click();
-});
 </script>
 </body>
 </html>
