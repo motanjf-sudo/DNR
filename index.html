@@ -195,6 +195,12 @@
         <div class="type-chip" onclick="toggleChip(this)">😄 طنز</div>
         <div class="type-chip" onclick="toggleChip(this)">🔬 علمی</div>
         <div class="type-chip" onclick="toggleChip(this)">💼 تجاری</div>
+        <div class="type-chip" onclick="toggleChip(this)">📣 تبلیغاتی</div>
+        <div class="type-chip" onclick="toggleChip(this)">🏛️ تاریخی</div>
+        <div class="type-chip" onclick="toggleChip(this)">⚖️ مقایسه‌ای</div>
+        <div class="type-chip" onclick="toggleChip(this)">🧐 انتقادی</div>
+        <div class="type-chip" onclick="toggleChip(this)">🕌 مذهبی</div>
+        <div class="type-chip" onclick="toggleChip(this)">📖 قرآن و حدیث</div>
       </div>
     </div>
 
@@ -261,13 +267,14 @@
           <option value="10">~۱۰ دقیقه</option>
           <option value="15">~۱۵ دقیقه</option>
           <option value="20">~۲۰ دقیقه</option>
+          <option value="25">~۲۵ دقیقه</option>
         </select>
       </div>
     </div>
 
     <button class="btn" id="generateBtn">
       <div class="spinner" id="spinner"></div>
-      <span id="btnText">✨ ساخت پادکست</span>
+      <span id="btnText">✨ ساخت محتوا</span>
     </button>
 
   </div>
@@ -489,7 +496,7 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   } finally {
     document.getElementById('generateBtn').disabled = false;
     document.getElementById('spinner').style.display = 'none';
-    document.getElementById('btnText').textContent = '✨ ساخت پادکست';
+    document.getElementById('btnText').textContent = '✨ ساخت محتوا';
   }
 });
 
