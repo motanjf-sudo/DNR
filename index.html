@@ -55,7 +55,24 @@
     color: var(--muted); font-size: 0.75rem; font-weight: 500;
   }
   .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .content-types-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .dropdown-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 1.1rem; border: 1.5px solid var(--border);
+    border-radius: 12px; background: var(--bg); cursor: pointer;
+    transition: all 0.2s; user-select: none;
+  }
+  .dropdown-toggle:hover { border-color: var(--accent); }
+  .dropdown-toggle.open { border-color: var(--accent); border-bottom-left-radius: 0; border-bottom-right-radius: 0; background: #fff; }
+  .dropdown-toggle-text { font-size: 0.9rem; color: var(--muted); }
+  .dropdown-toggle-text.has-selection { color: var(--accent); font-weight: 500; }
+  .dropdown-arrow { font-size: 0.7rem; color: var(--muted); transition: transform 0.2s; }
+  .dropdown-toggle.open .dropdown-arrow { transform: rotate(180deg); }
+  .dropdown-panel {
+    border: 1.5px solid var(--accent); border-top: none;
+    border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+    background: #fff; padding: 1rem; display: none; flex-wrap: wrap; gap: 0.5rem;
+  }
+  .dropdown-panel.open { display: flex; }
   .type-chip {
     padding: 0.45rem 0.9rem; border: 1.5px solid var(--border);
     border-radius: 40px; font-size: 0.82rem; font-weight: 500;
@@ -162,17 +179,23 @@
 
     <div class="divider">نوع محتوا (اختیاری)</div>
 
-    <div class="content-types-grid">
-      <div class="type-chip" onclick="toggleChip(this)">🎙️ پادکست</div>
-      <div class="type-chip" onclick="toggleChip(this)">📊 تحلیلی</div>
-      <div class="type-chip" onclick="toggleChip(this)">🎬 موشن گرافیک</div>
-      <div class="type-chip" onclick="toggleChip(this)">🎨 انیمیشن</div>
-      <div class="type-chip" onclick="toggleChip(this)">📰 خبری</div>
-      <div class="type-chip" onclick="toggleChip(this)">🎭 داستانی</div>
-      <div class="type-chip" onclick="toggleChip(this)">🎓 آموزشی</div>
-      <div class="type-chip" onclick="toggleChip(this)">😄 طنز</div>
-      <div class="type-chip" onclick="toggleChip(this)">🔬 علمی</div>
-      <div class="type-chip" onclick="toggleChip(this)">💼 تجاری</div>
+    <div>
+      <div class="dropdown-toggle" id="contentDropdownToggle" onclick="toggleContentDropdown()">
+        <span class="dropdown-toggle-text" id="contentDropdownLabel">انتخاب سبک محتوا...</span>
+        <span class="dropdown-arrow">▼</span>
+      </div>
+      <div class="dropdown-panel" id="contentDropdownPanel">
+        <div class="type-chip" onclick="toggleChip(this)">🎙️ پادکست</div>
+        <div class="type-chip" onclick="toggleChip(this)">📊 تحلیلی</div>
+        <div class="type-chip" onclick="toggleChip(this)">🎬 موشن گرافیک</div>
+        <div class="type-chip" onclick="toggleChip(this)">🎨 انیمیشن</div>
+        <div class="type-chip" onclick="toggleChip(this)">📰 خبری</div>
+        <div class="type-chip" onclick="toggleChip(this)">🎭 داستانی</div>
+        <div class="type-chip" onclick="toggleChip(this)">🎓 آموزشی</div>
+        <div class="type-chip" onclick="toggleChip(this)">😄 طنز</div>
+        <div class="type-chip" onclick="toggleChip(this)">🔬 علمی</div>
+        <div class="type-chip" onclick="toggleChip(this)">💼 تجاری</div>
+      </div>
     </div>
 
     <div class="divider">شخصیت‌ها (اختیاری)</div>
@@ -234,6 +257,10 @@
           <option value="2" selected>~۲ دقیقه</option>
           <option value="3">~۳ دقیقه</option>
           <option value="5">~۵ دقیقه</option>
+          <option value="7">~۷ دقیقه</option>
+          <option value="10">~۱۰ دقیقه</option>
+          <option value="15">~۱۵ دقیقه</option>
+          <option value="20">~۲۰ دقیقه</option>
         </select>
       </div>
     </div>
@@ -272,7 +299,30 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 const WORKER_URL = "https://tts-gemini.motanjf.workers.dev";
 let extractedFileText = null;
 
-function toggleChip(el) { el.classList.toggle('selected'); }
+function toggleContentDropdown() {
+  const toggle = document.getElementById('contentDropdownToggle');
+  const panel = document.getElementById('contentDropdownPanel');
+  toggle.classList.toggle('open');
+  panel.classList.toggle('open');
+}
+
+function toggleChip(el) {
+  el.classList.toggle('selected');
+  updateDropdownLabel();
+}
+
+function updateDropdownLabel() {
+  const selected = getSelectedTypes();
+  const label = document.getElementById('contentDropdownLabel');
+  if (selected.length === 0) {
+    label.textContent = 'انتخاب سبک محتوا...';
+    label.classList.remove('has-selection');
+  } else {
+    label.textContent = selected.join('، ');
+    label.classList.add('has-selection');
+  }
+}
+
 function getSelectedTypes() {
   return [...document.querySelectorAll('.type-chip.selected')]
     .map(el => el.textContent.replace(/^\S+\s/, '').trim());
